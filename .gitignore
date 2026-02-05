@@ -36,3 +36,6 @@ pnpm-debug.log*
 tmp/
 temp/
 .cache/
+
+# Runtime data (evidence, receipts, refusals)
+data/

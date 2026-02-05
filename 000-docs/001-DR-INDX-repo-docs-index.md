@@ -33,6 +33,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `013-DR-GUID-claude-subagents-roster.md` | Documentation | Guide | Project-local Claude subagents catalog |
 | `014-PR-GUID-phases-subagent-usage.md` | Product | Guide | Subagent usage by implementation phase |
 | `015-AA-REPT-pre-phase-completion.md` | After-Action | Report | Pre-phase completion AAR (subagents, alignment, ERC-8004) |
+| `016-DR-GUID-phase-2-intent-schema-config.md` | Documentation | Guide | Phase 2 technical guide (config, schema, CLI) |
+| `017-AA-REPT-phase-2-config-intent-fixture.md` | After-Action | Report | Phase 2 AAR |
 
 ---
 
@@ -57,6 +59,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [013 - Subagents Roster](./013-DR-GUID-claude-subagents-roster.md)
 - [014 - Phase Subagent Usage](./014-PR-GUID-phases-subagent-usage.md)
 - [015 - Pre-Phase Completion AAR](./015-AA-REPT-pre-phase-completion.md)
+- [016 - Phase 2 Guide](./016-DR-GUID-phase-2-intent-schema-config.md)
+- [017 - Phase 2 AAR](./017-AA-REPT-phase-2-config-intent-fixture.md)
 
 ---
 
@@ -64,8 +68,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 9 |
-| After-Action | AA | 5 |
+| Documentation | DR | 10 |
+| After-Action | AA | 6 |
 | Product | PR | 2 |
 | Technical Model | TM | 0 |
 
