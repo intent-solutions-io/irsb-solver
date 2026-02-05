@@ -19,6 +19,8 @@ const baseIntent: NormalizedIntent = {
 const baseConfig: ResolvedConfig = {
   NODE_ENV: "test",
   LOG_LEVEL: "info",
+  PORT: 8080,
+  METRICS_ENABLED: true,
   DATA_DIR: "./data",
   POLICY_JOBTYPE_ALLOWLIST: ["SAFE_REPORT"],
   POLICY_MAX_ARTIFACT_MB: 5,

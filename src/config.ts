@@ -37,6 +37,13 @@ export const ConfigSchema = z.object({
   NODE_ENV: NodeEnvSchema.default("development"),
   LOG_LEVEL: LogLevelSchema.default("info"),
 
+  // Server settings
+  PORT: z.coerce.number().int().positive().default(8080),
+  METRICS_ENABLED: z
+    .string()
+    .optional()
+    .transform((s) => s !== "false"),
+
   // Data directories
   DATA_DIR: z.string().default("./data"),
 
@@ -66,6 +73,8 @@ export const ConfigSchema = z.object({
 export interface ResolvedConfig {
   NODE_ENV: NodeEnv;
   LOG_LEVEL: LogLevel;
+  PORT: number;
+  METRICS_ENABLED: boolean;
   DATA_DIR: string;
   INTENT_FIXTURE_PATH?: string | undefined;
   POLICY_JOBTYPE_ALLOWLIST: string[];
@@ -111,6 +120,8 @@ export function loadConfig(): ResolvedConfig {
   return {
     NODE_ENV: parsed.NODE_ENV,
     LOG_LEVEL: parsed.LOG_LEVEL,
+    PORT: parsed.PORT,
+    METRICS_ENABLED: parsed.METRICS_ENABLED,
     DATA_DIR: dataDir,
     INTENT_FIXTURE_PATH: parsed.INTENT_FIXTURE_PATH,
     POLICY_JOBTYPE_ALLOWLIST: parsed.POLICY_JOBTYPE_ALLOWLIST,
@@ -129,6 +140,8 @@ export function configSummary(config: ResolvedConfig): Record<string, unknown> {
   return {
     NODE_ENV: config.NODE_ENV,
     LOG_LEVEL: config.LOG_LEVEL,
+    PORT: config.PORT,
+    METRICS_ENABLED: config.METRICS_ENABLED,
     DATA_DIR: config.DATA_DIR,
     INTENT_FIXTURE_PATH: config.INTENT_FIXTURE_PATH ?? "(not set)",
     POLICY_JOBTYPE_ALLOWLIST: config.POLICY_JOBTYPE_ALLOWLIST,
