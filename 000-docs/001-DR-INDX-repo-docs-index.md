@@ -22,6 +22,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `002-AA-REPT-phase-1-repo-scaffold-docs-filing.md` | After-Action | Report | Phase 1 AAR |
 | `003-PR-PRDC-irsb-solver-reference-executor.md` | Product | PRD | Product requirements for reference executor |
 | `004-DR-ADRD-irsb-solver-architecture-decisions.md` | Documentation | ADR | Architecture decisions and rationale |
+| `005-AA-REPT-phase-1-prd-adr.md` | After-Action | Report | Phase 1 PRD+ADR AAR |
+| `006-DR-GUID-ci-baseline-github-actions-codeql.md` | Documentation | Guide | CI baseline with GitHub Actions and CodeQL |
 
 ---
 
@@ -35,6 +37,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [002 - Phase 1 AAR](./002-AA-REPT-phase-1-repo-scaffold-docs-filing.md)
 - [003 - PRD: Reference Executor](./003-PR-PRDC-irsb-solver-reference-executor.md)
 - [004 - ADR: Architecture Decisions](./004-DR-ADRD-irsb-solver-architecture-decisions.md)
+- [005 - Phase 1 PRD+ADR AAR](./005-AA-REPT-phase-1-prd-adr.md)
+- [006 - CI Baseline Guide](./006-DR-GUID-ci-baseline-github-actions-codeql.md)
 
 ---
 
@@ -42,8 +46,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 3 |
-| After-Action | AA | 1 |
+| Documentation | DR | 4 |
+| After-Action | AA | 2 |
 | Product | PR | 1 |
 | Technical Model | TM | 0 |
 
