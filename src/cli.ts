@@ -10,12 +10,33 @@
 
 import { Command } from "commander";
 import { readFileSync } from "node:fs";
+import { ZodError } from "zod";
 import { loadConfig, configSummary, type ResolvedConfig } from "./config.js";
 import { normalizeIntent, computeIntentId } from "./intent/normalize.js";
 import { evaluatePolicy, createRefusalRecord } from "./policy/policy.js";
 import { createExecutionPlan, formatExecutionPlan } from "./plan/plan.js";
 import { appendJsonl } from "./storage/jsonl.js";
 import type { NormalizedIntent } from "./types/intent.js";
+
+/**
+ * Formats an error for CLI output.
+ * Provides detailed output for ZodError validation failures.
+ */
+function formatError(error: unknown): string {
+  if (error instanceof ZodError) {
+    const issues = error.issues.map((issue) => {
+      const path = issue.path.length > 0 ? issue.path.join(".") : "(root)";
+      return `  - ${path}: ${issue.message}`;
+    });
+    return `Validation failed:\n${issues.join("\n")}`;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return String(error);
+}
 
 const program = new Command();
 
@@ -38,11 +59,7 @@ program
       process.exit(0);
     } catch (error) {
       console.error("Configuration error:");
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error(error);
-      }
+      console.error(formatError(error));
       process.exit(1);
     }
   });
@@ -75,11 +92,7 @@ program
       process.exit(0);
     } catch (error) {
       console.error("Error processing intent:");
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error(error);
-      }
+      console.error(formatError(error));
       process.exit(1);
     }
   });
@@ -100,11 +113,7 @@ program
       config = loadConfig();
     } catch (error) {
       console.error("Configuration error:");
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error(error);
-      }
+      console.error(formatError(error));
       process.exit(1);
     }
 
@@ -115,11 +124,7 @@ program
       normalized = normalizeIntent(parsed);
     } catch (error) {
       console.error("Error processing intent:");
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error(error);
-      }
+      console.error(formatError(error));
       process.exit(1);
     }
 
@@ -146,9 +151,7 @@ program
         console.log(`Refusal recorded to: ${config.REFUSALS_PATH}`);
       } catch (error) {
         console.error("Error writing refusal record:");
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
+        console.error(formatError(error));
       }
 
       process.exit(2); // Exit code 2 for policy refusal
