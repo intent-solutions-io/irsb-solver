@@ -35,6 +35,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `015-AA-REPT-pre-phase-completion.md` | After-Action | Report | Pre-phase completion AAR (subagents, alignment, ERC-8004) |
 | `016-DR-GUID-phase-2-intent-schema-config.md` | Documentation | Guide | Phase 2 technical guide (config, schema, CLI) |
 | `017-AA-REPT-phase-2-config-intent-fixture.md` | After-Action | Report | Phase 2 AAR |
+| `018-PR-ADDM-phase-3-safe-report-execution.md` | Product | Addendum | Phase 3 SAFE_REPORT execution spec |
+| `019-DR-ADDM-phase-3-artifact-layout-atomic-writes.md` | Documentation | Addendum | Phase 3 artifact layout and atomic writes |
 
 ---
 
@@ -61,6 +63,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [015 - Pre-Phase Completion AAR](./015-AA-REPT-pre-phase-completion.md)
 - [016 - Phase 2 Guide](./016-DR-GUID-phase-2-intent-schema-config.md)
 - [017 - Phase 2 AAR](./017-AA-REPT-phase-2-config-intent-fixture.md)
+- [018 - Phase 3 SAFE_REPORT Spec](./018-PR-ADDM-phase-3-safe-report-execution.md)
+- [019 - Phase 3 Artifact Layout](./019-DR-ADDM-phase-3-artifact-layout-atomic-writes.md)
 
 ---
 
@@ -68,9 +72,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 10 |
+| Documentation | DR | 11 |
 | After-Action | AA | 6 |
-| Product | PR | 2 |
+| Product | PR | 3 |
 | Technical Model | TM | 0 |
 
 ---
