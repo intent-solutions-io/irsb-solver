@@ -300,7 +300,6 @@ program
         console.log(`manifestSha256: ${evidenceResult.manifestSha256}`);
         process.exit(0);
       } else {
-        const durationMs = Date.now() - startTime;
         runLogger.error(
           { status: result.status, error: result.error, durationMs },
           "Job execution failed"

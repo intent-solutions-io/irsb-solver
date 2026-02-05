@@ -40,16 +40,18 @@ function main(): void {
     // Graceful shutdown
     const shutdown = (signal: string) => {
       logger.info({ signal }, "Received shutdown signal");
-      server.close(() => {
-        logger.info("Server closed");
-        process.exit(0);
-      });
 
       // Force exit after timeout
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         logger.warn("Forcing exit after timeout");
         process.exit(1);
       }, 10000);
+
+      server.close(() => {
+        clearTimeout(timeoutId);
+        logger.info("Server closed");
+        process.exit(0);
+      });
     };
 
     process.on("SIGTERM", () => {
