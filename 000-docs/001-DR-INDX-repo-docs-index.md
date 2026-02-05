@@ -40,6 +40,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `020-AA-REPT-phase-3-safe-report-execution.md` | After-Action | Report | Phase 3 AAR |
 | `021-PR-ADDM-phase-4-evidence-bundle-spec.md` | Product | Addendum | Phase 4 evidence bundle spec |
 | `022-DR-ADDM-phase-4-manifest-hash-determinism.md` | Documentation | Addendum | Phase 4 manifest hash and determinism |
+| `023-AA-REPT-phase-4-evidence-bundle.md` | After-Action | Report | Phase 4 AAR |
 
 ---
 
@@ -71,6 +72,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [020 - Phase 3 AAR](./020-AA-REPT-phase-3-safe-report-execution.md)
 - [021 - Phase 4 Evidence Bundle Spec](./021-PR-ADDM-phase-4-evidence-bundle-spec.md)
 - [022 - Phase 4 Manifest Hash Determinism](./022-DR-ADDM-phase-4-manifest-hash-determinism.md)
+- [023 - Phase 4 AAR](./023-AA-REPT-phase-4-evidence-bundle.md)
 
 ---
 
@@ -79,7 +81,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | Category | Code | Count |
 |----------|------|-------|
 | Documentation | DR | 12 |
-| After-Action | AA | 7 |
+| After-Action | AA | 8 |
 | Product | PR | 4 |
 | Technical Model | TM | 0 |
 
