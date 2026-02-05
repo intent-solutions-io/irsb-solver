@@ -2,7 +2,7 @@
 
 **Document ID:** 001-DR-INDX-repo-docs-index
 **Repository:** irsb-solver
-**Last Updated:** 2025-02-04
+**Last Updated:** 2026-02-04
 **Timezone:** America/Chicago
 
 ---
@@ -19,7 +19,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 |----------|----------|------|---------|
 | `6767-DR-STND-document-filing-system-v4-2.md` | Documentation | Standard | Canonical document filing standard v4.2 |
 | `001-DR-INDX-repo-docs-index.md` | Documentation | Index | This file - repository document catalog |
-| `002-AA-REPT-phase-1-repo-scaffold-docs-filing.md` | After-Action | Report | Phase 1 AAR (pending) |
+| `002-AA-REPT-phase-1-repo-scaffold-docs-filing.md` | After-Action | Report | Phase 1 AAR |
+| `003-PR-PRDC-irsb-solver-reference-executor.md` | Product | PRD | Product requirements for reference executor |
+| `004-DR-ADRD-irsb-solver-architecture-decisions.md` | Documentation | ADR | Architecture decisions and rationale |
 
 ---
 
@@ -30,7 +32,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 ### Project Documents (NNN)
 - [001 - Repo Docs Index](./001-DR-INDX-repo-docs-index.md) (this file)
-- [002 - Phase 1 AAR](./002-AA-REPT-phase-1-repo-scaffold-docs-filing.md) (pending)
+- [002 - Phase 1 AAR](./002-AA-REPT-phase-1-repo-scaffold-docs-filing.md)
+- [003 - PRD: Reference Executor](./003-PR-PRDC-irsb-solver-reference-executor.md)
+- [004 - ADR: Architecture Decisions](./004-DR-ADRD-irsb-solver-architecture-decisions.md)
 
 ---
 
@@ -38,10 +42,10 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 2 |
+| Documentation | DR | 3 |
 | After-Action | AA | 1 |
+| Product | PR | 1 |
 | Technical Model | TM | 0 |
-| Architecture Decision | AD | 0 |
 
 ---
 
