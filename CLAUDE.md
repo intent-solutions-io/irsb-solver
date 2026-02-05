@@ -247,3 +247,35 @@ If uncertain about state:
 - Do not proceed until the next concrete task is identified
 
 ---
+
+## 9) Project-Local Subagents
+
+This repo includes 8 specialized subagents in `.claude/agents/`. Use them for their designated purposes:
+
+| Agent | When to Use |
+|-------|-------------|
+| `repo-librarian` | Finding files, understanding project structure |
+| `security-auditor` | Security reviews, secret leak checks |
+| `protocol-researcher` | Cross-repo alignment, schema verification |
+| `ts-architect` | Module design, structural decisions |
+| `test-engineer` | Test writing, fixture setup, debugging tests |
+| `ci-engineer` | CI/CD workflow updates, debugging CI failures |
+| `github-operator` | Branch/PR management, Git operations |
+| `determinism-guardian` | Hash logic audit, reproducibility checks |
+
+### Usage Guidelines
+
+1. **Automatic Invocation**: Agents trigger on matching task patterns
+2. **Cross-Repo Work**: Use `protocol-researcher` for any irsb-protocol/watchtower correlation
+3. **Determinism Critical**: Use `determinism-guardian` for any hashing or ID computation
+4. **Before Merge**: Use `security-auditor` for security review
+
+### Phase Mapping
+
+See `000-docs/014-PR-GUID-phases-subagent-usage.md` for which agents to use in each implementation phase.
+
+### Full Roster
+
+See `000-docs/013-DR-GUID-claude-subagents-roster.md` for detailed agent profiles.
+
+---

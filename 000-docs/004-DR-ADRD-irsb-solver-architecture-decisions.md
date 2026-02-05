@@ -334,11 +334,60 @@ Create separate ADRs when these become relevant:
 
 ---
 
-## 9. Revision History
+## 9. ERC-8004 Scope Decision (Phase 7)
+
+### Decision
+
+Phase 7 will borrow **only discovery and registration shapes** from ERC-8004:
+
+| Borrowed | Not Borrowed |
+|----------|--------------|
+| `/.well-known/agent-card.json` endpoint | LLM agent scaffolding |
+| Registration JSON schema | Agent orchestration patterns |
+| `register` command stub | AI/ML agent semantics |
+
+### Rationale
+
+IRSB Solver is a **deterministic executor**, not an AI agent:
+- No natural language interpretation
+- No LLM-based decision making
+- No autonomous goal-seeking behavior
+
+ERC-8004's discovery mechanism is useful for:
+- Machine-readable capability advertisement
+- Integration with agent registries (for reputation signals)
+- Standardized service discovery
+
+### Implementation (Phase 7)
+
+1. Add `/.well-known/agent-card.json` endpoint with:
+   - Solver capabilities (job types supported)
+   - Contract addresses (SolverRegistry, IntentReceiptHub)
+   - Reputation link (IntentScore query endpoint)
+
+2. Add `solver register` CLI command to:
+   - Generate agent-card.json from config
+   - Optionally post to ERC-8004 registry (if available)
+
+3. **Do NOT** import:
+   - LLM agent orchestration libraries
+   - AI agent decision frameworks
+   - Natural language processing
+
+### Consequences
+
+- Solver remains a deterministic, auditable executor
+- Compatible with ERC-8004 discovery ecosystem
+- Clear separation from AI agent semantics
+
+---
+
+## 10. Revision History
 
 | Date | Change |
 |------|--------|
 | 2026-02-04 | Initial version |
+| 2026-02-05 | Added ERC-8004 scope decision for Phase 7 |
 
 ---
 

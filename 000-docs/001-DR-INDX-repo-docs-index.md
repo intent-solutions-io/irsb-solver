@@ -28,6 +28,11 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `008-DR-GUID-determinism-and-reproducibility.md` | Documentation | Guide | Determinism pledge and reproducibility rules |
 | `009-DR-POLC-immutable-artifacts-policy.md` | Documentation | Policy | Immutable evidence and receipts policy |
 | `010-DR-GUID-github-repo-operations.md` | Documentation | Guide | GitHub settings and repo operations |
+| `011-AA-REPT-pre-phase-repo-hardening.md` | After-Action | Report | Pre-phase repo hardening AAR |
+| `012-DR-ANLY-cross-repo-alignment.md` | Documentation | Analysis | Cross-repo schema and ID alignment |
+| `013-DR-GUID-claude-subagents-roster.md` | Documentation | Guide | Project-local Claude subagents catalog |
+| `014-PR-GUID-phases-subagent-usage.md` | Product | Guide | Subagent usage by implementation phase |
+| `015-AA-REPT-pre-phase-completion.md` | After-Action | Report | Pre-phase completion AAR (subagents, alignment, ERC-8004) |
 
 ---
 
@@ -47,6 +52,11 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [008 - Determinism Guide](./008-DR-GUID-determinism-and-reproducibility.md)
 - [009 - Immutable Artifacts Policy](./009-DR-POLC-immutable-artifacts-policy.md)
 - [010 - GitHub Repo Operations](./010-DR-GUID-github-repo-operations.md)
+- [011 - Pre-Phase Hardening AAR](./011-AA-REPT-pre-phase-repo-hardening.md)
+- [012 - Cross-Repo Alignment](./012-DR-ANLY-cross-repo-alignment.md)
+- [013 - Subagents Roster](./013-DR-GUID-claude-subagents-roster.md)
+- [014 - Phase Subagent Usage](./014-PR-GUID-phases-subagent-usage.md)
+- [015 - Pre-Phase Completion AAR](./015-AA-REPT-pre-phase-completion.md)
 
 ---
 
@@ -54,9 +64,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 7 |
-| After-Action | AA | 3 |
-| Product | PR | 1 |
+| Documentation | DR | 9 |
+| After-Action | AA | 5 |
+| Product | PR | 2 |
 | Technical Model | TM | 0 |
 
 ---

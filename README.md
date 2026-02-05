@@ -10,6 +10,32 @@ IRSB Solver is the actor implementation that:
 - Produces evidence of execution
 - Submits receipts for settlement
 
+## Determinism Pledge
+
+This solver is designed for **reproducible, auditable execution**:
+
+- **Deterministic IDs**: All identifiers (`runId`, `receiptId`) are computed from canonical inputs, not random UUIDs
+- **Canonical Hashing**: JSON is sorted by keys, no floats in hashed content, no wall-clock timestamps in artifacts
+- **Reproducible Evidence**: Given the same intent and inputs, the solver produces identical evidence hashes
+- **Idempotent Retries**: Re-running the same intent produces the same receipt (no duplicate work)
+
+This enables:
+- Third-party verification of execution correctness
+- Watchtower correlation of receipts to intents
+- Dispute resolution based on reproducible evidence
+
+## What This Repo Does NOT Do
+
+**Out of Scope:**
+
+| Not Here | Where It Belongs |
+|----------|------------------|
+| On-chain contracts | [irsb-protocol](https://github.com/intent-solutions-io/irsb-protocol) |
+| Monitoring/alerting | [irsb-watchtower](https://github.com/intent-solutions-io/irsb-watchtower) |
+| LLM/AI agent orchestration | Not part of IRSB (ERC-8004 discovery shapes only) |
+| Multi-solver coordination | Future scope |
+| Chain-native execution | Solvers execute off-chain, post receipts on-chain |
+
 ## Related Repositories
 
 | Repo | Purpose |
@@ -58,4 +84,16 @@ pnpm build
 
 ## License
 
-MIT
+MIT License - See [LICENSE](./LICENSE) for details.
+
+### Licensing Scope
+
+This license applies to:
+- All source code in this repository
+- Documentation in `000-docs/`
+- Configuration files and examples
+
+This license does NOT cover:
+- The IRSB protocol specification (separate ERC proposal)
+- On-chain contracts (see [irsb-protocol](https://github.com/intent-solutions-io/irsb-protocol))
+- Third-party dependencies (see their respective licenses)
