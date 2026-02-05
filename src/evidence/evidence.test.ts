@@ -153,7 +153,7 @@ describe("Evidence Bundle Creation", () => {
     }
   });
 
-  it("should create manifest with correct structure", () => {
+  it("should create manifest with correct structure", async () => {
     const runDir = join(TEST_DIR, "run-001");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
@@ -162,7 +162,7 @@ describe("Evidence Bundle Creation", () => {
     const content = '{"test":"data"}';
     writeFileSync(join(artifactsDir, "report.json"), content);
 
-    const result = createEvidenceBundle({
+    const result = await createEvidenceBundle({
       runDir,
       intentId: "intent-123",
       runId: "run-001",
@@ -180,7 +180,7 @@ describe("Evidence Bundle Creation", () => {
     expect(firstArtifact?.path).toBe("artifacts/report.json");
   });
 
-  it("should compute correct artifact hashes", () => {
+  it("should compute correct artifact hashes", async () => {
     const runDir = join(TEST_DIR, "run-002");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
@@ -189,7 +189,7 @@ describe("Evidence Bundle Creation", () => {
     const expectedHash = sha256(content);
     writeFileSync(join(artifactsDir, "test.txt"), content);
 
-    const result = createEvidenceBundle({
+    const result = await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-002",
@@ -203,7 +203,7 @@ describe("Evidence Bundle Creation", () => {
     expect(artifact?.sha256).toBe(expectedHash);
   });
 
-  it("should sort artifacts by path", () => {
+  it("should sort artifacts by path", async () => {
     const runDir = join(TEST_DIR, "run-003");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
@@ -212,7 +212,7 @@ describe("Evidence Bundle Creation", () => {
     writeFileSync(join(artifactsDir, "apple.txt"), "a");
     writeFileSync(join(artifactsDir, "mango.txt"), "m");
 
-    const result = createEvidenceBundle({
+    const result = await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-003",
@@ -229,13 +229,13 @@ describe("Evidence Bundle Creation", () => {
     ]);
   });
 
-  it("should write manifest atomically", () => {
+  it("should write manifest atomically", async () => {
     const runDir = join(TEST_DIR, "run-004");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
     writeFileSync(join(artifactsDir, "test.txt"), "content");
 
-    const result = createEvidenceBundle({
+    const result = await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-004",
@@ -248,13 +248,13 @@ describe("Evidence Bundle Creation", () => {
     expect(existsSync(join(runDir, "evidence", "manifest.sha256"))).toBe(true);
   });
 
-  it("should read manifest from disk", () => {
+  it("should read manifest from disk", async () => {
     const runDir = join(TEST_DIR, "run-005");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
     writeFileSync(join(artifactsDir, "test.txt"), "content");
 
-    const createResult = createEvidenceBundle({
+    const createResult = await createEvidenceBundle({
       runDir,
       intentId: "read-test-intent",
       runId: "run-005",
@@ -283,13 +283,13 @@ describe("Evidence Bundle Validation", () => {
     }
   });
 
-  it("should validate a correct bundle", () => {
+  it("should validate a correct bundle", async () => {
     const runDir = join(TEST_DIR, "run-valid");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
     writeFileSync(join(artifactsDir, "test.txt"), "content");
 
-    createEvidenceBundle({
+    await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-valid",
@@ -298,21 +298,21 @@ describe("Evidence Bundle Validation", () => {
       executionSummary: { status: "SUCCESS" },
     });
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
   });
 
-  it("should detect missing manifest", () => {
+  it("should detect missing manifest", async () => {
     const runDir = join(TEST_DIR, "run-no-manifest");
     mkdirSync(runDir, { recursive: true });
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.code === "MANIFEST_NOT_FOUND")).toBe(true);
   });
 
-  it("should detect tampered artifact (hash mismatch)", () => {
+  it("should detect tampered artifact (hash mismatch)", async () => {
     const runDir = join(TEST_DIR, "run-tampered");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
@@ -320,7 +320,7 @@ describe("Evidence Bundle Validation", () => {
     const originalContent = "original content";
     writeFileSync(join(artifactsDir, "test.txt"), originalContent);
 
-    createEvidenceBundle({
+    await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-tampered",
@@ -332,19 +332,19 @@ describe("Evidence Bundle Validation", () => {
     // Tamper with the artifact
     writeFileSync(join(artifactsDir, "test.txt"), "modified content");
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.code === "HASH_MISMATCH")).toBe(true);
   });
 
-  it("should detect missing artifact", () => {
+  it("should detect missing artifact", async () => {
     const runDir = join(TEST_DIR, "run-missing-artifact");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
 
     writeFileSync(join(artifactsDir, "test.txt"), "content");
 
-    createEvidenceBundle({
+    await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-missing-artifact",
@@ -356,19 +356,19 @@ describe("Evidence Bundle Validation", () => {
     // Delete the artifact
     rmSync(join(artifactsDir, "test.txt"));
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.code === "ARTIFACT_NOT_FOUND")).toBe(true);
   });
 
-  it("should detect size mismatch", () => {
+  it("should detect size mismatch", async () => {
     const runDir = join(TEST_DIR, "run-size-mismatch");
     const artifactsDir = join(runDir, "artifacts");
     mkdirSync(artifactsDir, { recursive: true });
 
     writeFileSync(join(artifactsDir, "test.txt"), "short");
 
-    createEvidenceBundle({
+    await createEvidenceBundle({
       runDir,
       intentId: "intent",
       runId: "run-size-mismatch",
@@ -380,7 +380,7 @@ describe("Evidence Bundle Validation", () => {
     // Change the content to different length but same-ish hash beginning
     writeFileSync(join(artifactsDir, "test.txt"), "much longer content here");
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.code === "SIZE_MISMATCH")).toBe(true);
   });
@@ -400,7 +400,7 @@ describe("Path Safety", () => {
     }
   });
 
-  it("should reject path traversal in manifest", () => {
+  it("should reject path traversal in manifest", async () => {
     const runDir = join(TEST_DIR, "run-traversal");
     const evidenceDir = join(runDir, "evidence");
     mkdirSync(evidenceDir, { recursive: true });
@@ -430,12 +430,12 @@ describe("Path Safety", () => {
       JSON.stringify(badManifest, null, 2)
     );
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.code === "UNSAFE_PATH")).toBe(true);
   });
 
-  it("should reject absolute paths in manifest", () => {
+  it("should reject absolute paths in manifest", async () => {
     const runDir = join(TEST_DIR, "run-absolute");
     const evidenceDir = join(runDir, "evidence");
     mkdirSync(evidenceDir, { recursive: true });
@@ -464,7 +464,7 @@ describe("Path Safety", () => {
       JSON.stringify(badManifest, null, 2)
     );
 
-    const result = validateEvidenceBundle(runDir);
+    const result = await validateEvidenceBundle(runDir);
     expect(result.valid).toBe(false);
     expect(result.errors.some((e) => e.code === "UNSAFE_PATH")).toBe(true);
   });
@@ -484,7 +484,7 @@ describe("Determinism", () => {
     }
   });
 
-  it("should produce identical manifest hashes for identical content", () => {
+  it("should produce identical manifest hashes for identical content", async () => {
     // Run 1
     const runDir1 = join(TEST_DIR, "run-determ-1");
     const artifactsDir1 = join(runDir1, "artifacts");
@@ -492,7 +492,7 @@ describe("Determinism", () => {
     writeFileSync(join(artifactsDir1, "report.json"), '{"key":"value"}');
     writeFileSync(join(artifactsDir1, "report.md"), "# Report\n");
 
-    const result1 = createEvidenceBundle({
+    const result1 = await createEvidenceBundle({
       runDir: runDir1,
       intentId: "same-intent",
       runId: "same-run",
@@ -510,7 +510,7 @@ describe("Determinism", () => {
     writeFileSync(join(artifactsDir2, "report.json"), '{"key":"value"}');
     writeFileSync(join(artifactsDir2, "report.md"), "# Report\n");
 
-    const result2 = createEvidenceBundle({
+    const result2 = await createEvidenceBundle({
       runDir: runDir2,
       intentId: "same-intent",
       runId: "same-run",
@@ -523,13 +523,13 @@ describe("Determinism", () => {
     expect(result1.manifestSha256).toBe(result2.manifestSha256);
   });
 
-  it("should produce different hashes for different artifact content", () => {
+  it("should produce different hashes for different artifact content", async () => {
     const runDir1 = join(TEST_DIR, "run-diff-1");
     const artifactsDir1 = join(runDir1, "artifacts");
     mkdirSync(artifactsDir1, { recursive: true });
     writeFileSync(join(artifactsDir1, "report.json"), '{"version":1}');
 
-    const result1 = createEvidenceBundle({
+    const result1 = await createEvidenceBundle({
       runDir: runDir1,
       intentId: "same-intent",
       runId: "same-run",
@@ -543,7 +543,7 @@ describe("Determinism", () => {
     mkdirSync(artifactsDir2, { recursive: true });
     writeFileSync(join(artifactsDir2, "report.json"), '{"version":2}');
 
-    const result2 = createEvidenceBundle({
+    const result2 = await createEvidenceBundle({
       runDir: runDir2,
       intentId: "same-intent",
       runId: "same-run",

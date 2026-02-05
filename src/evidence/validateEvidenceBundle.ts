@@ -4,8 +4,8 @@
  * Validates manifest schema, artifact integrity, and path safety.
  */
 
-import { join } from "node:path";
-import { existsSync, readFileSync } from "node:fs";
+import { join, sep } from "node:path";
+import { createReadStream, existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import {
   EvidenceManifestV0Schema,
@@ -32,6 +32,18 @@ export interface ValidationResult {
 }
 
 /**
+ * Computes SHA-256 hash of a file using streams for memory efficiency.
+ */
+async function hashFileStream(filePath: string): Promise<string> {
+  const hash = createHash("sha256");
+  const stream = createReadStream(filePath);
+  for await (const chunk of stream) {
+    hash.update(chunk as Buffer);
+  }
+  return hash.digest("hex");
+}
+
+/**
  * Validates an evidence bundle.
  *
  * Checks:
@@ -41,7 +53,7 @@ export interface ValidationResult {
  * 4. Artifact hash integrity
  * 5. Artifact size match
  */
-export function validateEvidenceBundle(runDir: string): ValidationResult {
+export async function validateEvidenceBundle(runDir: string): Promise<ValidationResult> {
   const errors: ValidationError[] = [];
 
   // Check manifest exists
@@ -129,9 +141,8 @@ export function validateEvidenceBundle(runDir: string): ValidationResult {
       });
     }
 
-    // Check hash
-    const content = readFileSync(fullPath);
-    const actualHash = createHash("sha256").update(content).digest("hex");
+    // Check hash using streaming for memory efficiency
+    const actualHash = await hashFileStream(fullPath);
     if (actualHash !== artifact.sha256) {
       errors.push({
         code: "HASH_MISMATCH",
@@ -151,10 +162,10 @@ export function validateEvidenceBundle(runDir: string): ValidationResult {
 /**
  * Validates manifest from a file path.
  */
-export function validateManifestFile(manifestPath: string): ValidationResult {
+export async function validateManifestFile(manifestPath: string): Promise<ValidationResult> {
   // Determine run directory from manifest path
   // Expected: runDir/evidence/manifest.json
-  const parts = manifestPath.split("/");
+  const parts = manifestPath.split(sep);
   const evidenceIdx = parts.lastIndexOf("evidence");
   if (evidenceIdx === -1 || evidenceIdx === 0) {
     return {
@@ -168,6 +179,6 @@ export function validateManifestFile(manifestPath: string): ValidationResult {
     };
   }
 
-  const runDir = parts.slice(0, evidenceIdx).join("/");
+  const runDir = parts.slice(0, evidenceIdx).join(sep);
   return validateEvidenceBundle(runDir);
 }

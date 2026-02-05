@@ -5,7 +5,7 @@
  */
 
 import { join } from "node:path";
-import { existsSync, readFileSync } from "node:fs";
+import { createReadStream, existsSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { canonicalJson } from "../utils/canonicalJson.js";
 import { getMimeType } from "../utils/mime.js";
@@ -18,6 +18,7 @@ import {
 } from "../storage/fsSafe.js";
 import {
   MANIFEST_VERSION,
+  EvidenceManifestV0Schema,
   type EvidenceManifestV0,
   type ArtifactEntry,
   type PolicyDecision,
@@ -53,17 +54,21 @@ export interface EvidenceBundleResult {
 }
 
 /**
- * Computes SHA-256 hash of a file.
+ * Computes SHA-256 hash of a file using streams for memory efficiency.
  */
-function hashFile(filePath: string): string {
-  const content = readFileSync(filePath);
-  return createHash("sha256").update(content).digest("hex");
+async function hashFile(filePath: string): Promise<string> {
+  const hash = createHash("sha256");
+  const stream = createReadStream(filePath);
+  for await (const chunk of stream) {
+    hash.update(chunk as Buffer);
+  }
+  return hash.digest("hex");
 }
 
 /**
  * Scans artifacts directory and builds artifact entries.
  */
-function scanArtifacts(runDir: string): ArtifactEntry[] {
+async function scanArtifacts(runDir: string): Promise<ArtifactEntry[]> {
   const artifactsDir = join(runDir, "artifacts");
 
   if (!existsSync(artifactsDir)) {
@@ -89,7 +94,7 @@ function scanArtifacts(runDir: string): ArtifactEntry[] {
 
     entries.push({
       path: relativePath,
-      sha256: hashFile(fullPath),
+      sha256: await hashFile(fullPath),
       bytes: getFileSize(fullPath),
       contentType: getMimeType(file),
     });
@@ -102,9 +107,9 @@ function scanArtifacts(runDir: string): ArtifactEntry[] {
 /**
  * Creates an evidence bundle for a completed run.
  */
-export function createEvidenceBundle(
+export async function createEvidenceBundle(
   params: CreateEvidenceBundleParams
-): EvidenceBundleResult {
+): Promise<EvidenceBundleResult> {
   const {
     runDir,
     intentId,
@@ -116,7 +121,7 @@ export function createEvidenceBundle(
   } = params;
 
   // Scan artifacts
-  const artifacts = scanArtifacts(runDir);
+  const artifacts = await scanArtifacts(runDir);
 
   // Build manifest
   const manifest: EvidenceManifestV0 = {
@@ -157,9 +162,9 @@ export function createEvidenceBundle(
 }
 
 /**
- * Reads an existing manifest from disk.
+ * Reads an existing manifest from disk with schema validation.
  */
 export function readManifest(manifestPath: string): EvidenceManifestV0 {
   const content = readFileSync(manifestPath, "utf8");
-  return JSON.parse(content) as EvidenceManifestV0;
+  return EvidenceManifestV0Schema.parse(JSON.parse(content));
 }

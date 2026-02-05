@@ -11,7 +11,7 @@
  */
 
 import { Command } from "commander";
-import { join } from "node:path";
+import { join, sep } from "node:path";
 import { readFileSync, existsSync } from "node:fs";
 import { ZodError } from "zod";
 import { loadConfig, configSummary, type ResolvedConfig } from "./config.js";
@@ -220,7 +220,7 @@ program
         console.log("");
         console.log("Creating evidence bundle...");
         const runDir = join(config.DATA_DIR, "runs", plan.runId);
-        const evidenceResult = createEvidenceBundle({
+        const evidenceResult = await createEvidenceBundle({
           runDir,
           intentId: normalized.intentId,
           runId: plan.runId,
@@ -255,7 +255,7 @@ program
   .command("make-evidence")
   .description("Create evidence bundle for an existing run")
   .argument("<runDir>", "Path to run directory")
-  .action((runDir: string) => {
+  .action(async (runDir: string) => {
     try {
       // Read manifest info from existing manifest if present, or infer from path
       const manifestPath = join(runDir, "evidence", "manifest.json");
@@ -263,8 +263,8 @@ program
       let runId = "unknown";
       let jobType = "unknown";
 
-      // Try to extract runId from path
-      const pathParts = runDir.split("/");
+      // Try to extract runId from path (use path.sep for cross-platform)
+      const pathParts = runDir.split(sep);
       const runsIdx = pathParts.lastIndexOf("runs");
       if (runsIdx !== -1 && runsIdx < pathParts.length - 1) {
         const extractedRunId = pathParts[runsIdx + 1];
@@ -281,7 +281,7 @@ program
         jobType = existing.jobType;
       }
 
-      const result = createEvidenceBundle({
+      const result = await createEvidenceBundle({
         runDir,
         intentId,
         runId,
@@ -313,13 +313,13 @@ program
   .command("validate-evidence")
   .description("Validate evidence bundle integrity")
   .argument("<path>", "Path to run directory or manifest file")
-  .action((path: string) => {
+  .action(async (path: string) => {
     try {
       // Determine if path is a run directory or manifest file
       const isManifestFile = path.endsWith("manifest.json");
       const result = isManifestFile
-        ? validateManifestFile(path)
-        : validateEvidenceBundle(path);
+        ? await validateManifestFile(path)
+        : await validateEvidenceBundle(path);
 
       if (result.valid) {
         console.log("Evidence bundle valid.");

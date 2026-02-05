@@ -67,7 +67,7 @@ export const EvidenceManifestV0Schema = z.object({
   runId: z.string(),
   jobType: z.string(),
   /** ISO timestamp - excluded from hash computation */
-  createdAt: z.string(),
+  createdAt: z.string().datetime({ message: "Invalid ISO timestamp" }),
   /** Artifacts sorted by path */
   artifacts: z.array(ArtifactEntrySchema),
   policyDecision: PolicyDecisionSchema,
