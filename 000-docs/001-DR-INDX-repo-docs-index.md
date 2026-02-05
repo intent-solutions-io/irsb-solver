@@ -43,6 +43,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `023-AA-REPT-phase-4-evidence-bundle.md` | After-Action | Report | Phase 4 AAR |
 | `024-DR-RUNB-operator-runbook.md` | Documentation | Runbook | Operator runbook for running and monitoring |
 | `025-PR-ADDM-phase-6-observability.md` | Product | Addendum | Phase 6 observability features |
+| `026-AA-REPT-phase-6-observability.md` | After-Action | Report | Phase 6 AAR |
 
 ---
 
@@ -77,6 +78,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [023 - Phase 4 AAR](./023-AA-REPT-phase-4-evidence-bundle.md)
 - [024 - Operator Runbook](./024-DR-RUNB-operator-runbook.md)
 - [025 - Phase 6 Observability](./025-PR-ADDM-phase-6-observability.md)
+- [026 - Phase 6 AAR](./026-AA-REPT-phase-6-observability.md)
 
 ---
 
@@ -85,7 +87,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | Category | Code | Count |
 |----------|------|-------|
 | Documentation | DR | 13 |
-| After-Action | AA | 8 |
+| After-Action | AA | 9 |
 | Product | PR | 5 |
 | Technical Model | TM | 0 |
 
