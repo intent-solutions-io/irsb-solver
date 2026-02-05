@@ -8,6 +8,7 @@
  * - run-fixture <path>: Validate, policy gate, execute, print result
  * - make-evidence <runDir>: Create evidence bundle for a run
  * - validate-evidence <path>: Validate evidence bundle integrity
+ * - erc8004:register --dry-run: Generate and display registration payload (stub)
  */
 
 import { Command } from "commander";
@@ -28,6 +29,7 @@ import {
   validateManifestFile,
   readManifest,
 } from "./evidence/index.js";
+import { executeRegisterCommand } from "./erc8004/index.js";
 import {
   initLogger,
   getLogger,
@@ -412,6 +414,42 @@ program
       console.error("Validation error:");
       console.error(formatError(error));
       process.exit(1);
+    }
+  });
+
+/**
+ * erc8004:register command (stub)
+ *
+ * Generates registration.json and displays what would be sent.
+ * No actual chain interaction - dry-run only.
+ */
+program
+  .command("erc8004:register")
+  .description("Generate ERC-8004 registration payload (stub - dry-run only)")
+  .option("--dry-run", "Dry run mode (required for stub)", true)
+  .option("--base-url <url>", "Base URL where agent is hosted", "http://localhost:8080")
+  .option("--format <format>", "Output format: text or json", "text")
+  .action((options: { dryRun: boolean; baseUrl: string; format: string }) => {
+    // Validate format option
+    if (options.format !== "text" && options.format !== "json") {
+      console.error(
+        `error: option '--format <format>' invalid choice: ${options.format} (choose from 'text', 'json')`
+      );
+      process.exit(1);
+    }
+
+    const result = executeRegisterCommand({
+      baseUrl: options.baseUrl,
+      dryRun: options.dryRun,
+      format: options.format,
+    });
+
+    if (result.success) {
+      console.log(result.output);
+      process.exit(result.exitCode);
+    } else {
+      console.error(result.output);
+      process.exit(result.exitCode);
     }
   });
 
