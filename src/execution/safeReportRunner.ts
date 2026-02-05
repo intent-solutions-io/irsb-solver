@@ -161,7 +161,10 @@ function generateMarkdownReport(
 export const safeReportRunner: JobRunner = {
   jobType: "SAFE_REPORT",
 
-  run(inputs: SafeReportInputs, ctx: RunContext): Promise<RunResult> {
+  async run(inputs: SafeReportInputs, ctx: RunContext): Promise<RunResult> {
+    // Use await to satisfy async requirement (future-proofs for async operations)
+    await Promise.resolve();
+
     try {
       // Generate report content
       const jsonReport = generateJsonReport(inputs, ctx);
@@ -176,11 +179,11 @@ export const safeReportRunner: JobRunner = {
         { path: mdPath, content: mdReport },
       ]);
 
-      return Promise.resolve(successResult(ctx, artifacts));
+      return successResult(ctx, artifacts);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unknown error during execution";
-      return Promise.resolve(failureResult(ctx, message));
+      return failureResult(ctx, message);
     }
   },
 };

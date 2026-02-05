@@ -12,7 +12,7 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { randomBytes } from "node:crypto";
 import type { ArtifactInfo } from "../execution/jobRunner.js";
 
@@ -81,8 +81,8 @@ export function writeArtifacts(
     for (const { temp, target } of tempFiles) {
       renameSync(temp, target);
       const size = statSync(target).size;
-      // Store relative filename only
-      const filename = target.split("/").pop() ?? target;
+      // Store relative filename only (use path.basename for cross-platform support)
+      const filename = basename(target);
       results.push({ path: filename, bytes: size });
     }
 

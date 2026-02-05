@@ -4,6 +4,7 @@
  * Provides the execution environment for job runners.
  */
 
+import { join } from "node:path";
 import type { JobType } from "../types/intent.js";
 
 /**
@@ -46,7 +47,7 @@ export function createRunContext(params: {
     runId,
     jobType,
     dataDir,
-    artifactsDir: `${dataDir}/runs/${runId}/artifacts`,
+    artifactsDir: join(dataDir, "runs", runId, "artifacts"),
     requester,
   };
 }

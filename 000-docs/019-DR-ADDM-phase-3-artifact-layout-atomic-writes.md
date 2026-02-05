@@ -100,6 +100,7 @@ Phase 3: Cleanup on failure
 ```typescript
 function writeArtifacts(artifacts: { path: string; content: string }[]): ArtifactInfo[] {
   const tempFiles: { temp: string; target: string }[] = [];
+  const results: ArtifactInfo[] = [];
 
   try {
     // Phase 1: Write to temps
@@ -109,9 +110,10 @@ function writeArtifacts(artifacts: { path: string; content: string }[]): Artifac
       tempFiles.push({ temp, target: path });
     }
 
-    // Phase 2: Rename all
+    // Phase 2: Rename all and collect results
     for (const { temp, target } of tempFiles) {
       renameSync(temp, target);
+      results.push({ path: basename(target), bytes: statSync(target).size });
     }
 
     return results;
