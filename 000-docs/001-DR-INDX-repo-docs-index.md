@@ -38,6 +38,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `018-PR-ADDM-phase-3-safe-report-execution.md` | Product | Addendum | Phase 3 SAFE_REPORT execution spec |
 | `019-DR-ADDM-phase-3-artifact-layout-atomic-writes.md` | Documentation | Addendum | Phase 3 artifact layout and atomic writes |
 | `020-AA-REPT-phase-3-safe-report-execution.md` | After-Action | Report | Phase 3 AAR |
+| `021-PR-ADDM-phase-4-evidence-bundle-spec.md` | Product | Addendum | Phase 4 evidence bundle spec |
+| `022-DR-ADDM-phase-4-manifest-hash-determinism.md` | Documentation | Addendum | Phase 4 manifest hash and determinism |
 
 ---
 
@@ -67,6 +69,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [018 - Phase 3 SAFE_REPORT Spec](./018-PR-ADDM-phase-3-safe-report-execution.md)
 - [019 - Phase 3 Artifact Layout](./019-DR-ADDM-phase-3-artifact-layout-atomic-writes.md)
 - [020 - Phase 3 AAR](./020-AA-REPT-phase-3-safe-report-execution.md)
+- [021 - Phase 4 Evidence Bundle Spec](./021-PR-ADDM-phase-4-evidence-bundle-spec.md)
+- [022 - Phase 4 Manifest Hash Determinism](./022-DR-ADDM-phase-4-manifest-hash-determinism.md)
 
 ---
 
@@ -74,9 +78,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 11 |
+| Documentation | DR | 12 |
 | After-Action | AA | 7 |
-| Product | PR | 3 |
+| Product | PR | 4 |
 | Technical Model | TM | 0 |
 
 ---
