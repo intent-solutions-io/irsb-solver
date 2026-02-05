@@ -153,6 +153,8 @@ Response fields:
 
 Purpose: Tell load balancer the service can handle requests.
 
+**Rate limited**: 10 requests/second (prevents DoS via filesystem access abuse).
+
 Checks performed:
 1. Configuration loaded successfully
 2. DATA_DIR exists and is writable
@@ -217,6 +219,7 @@ Timestamps in logs and metrics are for operational visibility only.
 | `pino-pretty` | ^11.0.0 | Development log formatting |
 | `prom-client` | ^15.1.3 | Prometheus metrics |
 | `express` | ^5.2.1 | HTTP server |
+| `express-rate-limit` | ^8.2.1 | Rate limiting for I/O endpoints |
 | `@types/express` | ^5.0.6 | TypeScript types |
 
 ---
