@@ -8,6 +8,7 @@
  */
 
 import express, { type Express, type Request, type Response } from "express";
+import rateLimit from "express-rate-limit";
 import { existsSync, accessSync, constants } from "node:fs";
 import { dirname } from "node:path";
 import type { ResolvedConfig } from "../config.js";
@@ -17,6 +18,18 @@ import {
   getMetricsContentType,
   initDefaultMetrics,
 } from "../obs/metrics.js";
+
+/**
+ * Rate limiter for endpoints that perform I/O.
+ * Prevents DoS via filesystem access abuse.
+ */
+const ioRateLimiter = rateLimit({
+  windowMs: 1000, // 1 second window
+  max: 10, // max 10 requests per second
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { ok: false, error: "Too many requests" },
+});
 
 /**
  * Service metadata.
@@ -86,8 +99,9 @@ export function createApp(config: ResolvedConfig): Express {
 
   /**
    * GET /readyz - Readiness probe
+   * Rate limited to prevent filesystem access abuse.
    */
-  app.get("/readyz", (_req: Request, res: Response) => {
+  app.get("/readyz", ioRateLimiter, (_req: Request, res: Response) => {
     const reasons: string[] = [];
 
     // Check data directory
