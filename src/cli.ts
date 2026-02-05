@@ -6,10 +6,13 @@
  * - check-config: Validate configuration
  * - print-intent <path>: Print normalized intent with intentId
  * - run-fixture <path>: Validate, policy gate, execute, print result
+ * - make-evidence <runDir>: Create evidence bundle for a run
+ * - validate-evidence <path>: Validate evidence bundle integrity
  */
 
 import { Command } from "commander";
-import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { readFileSync, existsSync } from "node:fs";
 import { ZodError } from "zod";
 import { loadConfig, configSummary, type ResolvedConfig } from "./config.js";
 import { normalizeIntent, computeIntentId } from "./intent/normalize.js";
@@ -19,6 +22,12 @@ import { appendJsonl } from "./storage/jsonl.js";
 import { createRunContext } from "./execution/runContext.js";
 import { getRunner } from "./execution/registry.js";
 import { canonicalJson } from "./utils/canonicalJson.js";
+import {
+  createEvidenceBundle,
+  validateEvidenceBundle,
+  validateManifestFile,
+  readManifest,
+} from "./evidence/index.js";
 import type { NormalizedIntent } from "./types/intent.js";
 import type { RunResult } from "./execution/jobRunner.js";
 
@@ -206,6 +215,27 @@ program
         for (const artifact of result.artifacts) {
           console.log(`  - ${artifact.path} (${String(artifact.bytes)} bytes)`);
         }
+
+        // Create evidence bundle
+        console.log("");
+        console.log("Creating evidence bundle...");
+        const runDir = join(config.DATA_DIR, "runs", plan.runId);
+        const evidenceResult = createEvidenceBundle({
+          runDir,
+          intentId: normalized.intentId,
+          runId: plan.runId,
+          jobType: normalized.jobType,
+          policyDecision: {
+            allowed: policyResult.allowed,
+            reasons: policyResult.reasons,
+          },
+          executionSummary: {
+            status: result.status,
+          },
+        });
+
+        console.log(`Evidence manifest: ${evidenceResult.manifestPath}`);
+        console.log(`manifestSha256: ${evidenceResult.manifestSha256}`);
         process.exit(0);
       } else {
         console.error(`Execution failed: ${result.error ?? "Unknown error"}`);
@@ -215,6 +245,103 @@ program
       console.error("Execution error:");
       console.error(formatError(error));
       process.exit(3);
+    }
+  });
+
+/**
+ * make-evidence command
+ */
+program
+  .command("make-evidence")
+  .description("Create evidence bundle for an existing run")
+  .argument("<runDir>", "Path to run directory")
+  .action((runDir: string) => {
+    try {
+      // Read manifest info from existing manifest if present, or infer from path
+      const manifestPath = join(runDir, "evidence", "manifest.json");
+      let intentId = "unknown";
+      let runId = "unknown";
+      let jobType = "unknown";
+
+      // Try to extract runId from path
+      const pathParts = runDir.split("/");
+      const runsIdx = pathParts.lastIndexOf("runs");
+      if (runsIdx !== -1 && runsIdx < pathParts.length - 1) {
+        const extractedRunId = pathParts[runsIdx + 1];
+        if (extractedRunId) {
+          runId = extractedRunId;
+        }
+      }
+
+      // If manifest exists, read metadata from it
+      if (existsSync(manifestPath)) {
+        const existing = readManifest(manifestPath);
+        intentId = existing.intentId;
+        runId = existing.runId;
+        jobType = existing.jobType;
+      }
+
+      const result = createEvidenceBundle({
+        runDir,
+        intentId,
+        runId,
+        jobType,
+        policyDecision: { allowed: true, reasons: [] },
+        executionSummary: { status: "SUCCESS" },
+      });
+
+      console.log("Evidence bundle created.");
+      console.log(`  Manifest: ${result.manifestPath}`);
+      console.log(`  manifestSha256: ${result.manifestSha256}`);
+      console.log("");
+      console.log("Artifacts:");
+      for (const artifact of result.manifest.artifacts) {
+        console.log(`  - ${artifact.path} (${String(artifact.bytes)} bytes)`);
+      }
+      process.exit(0);
+    } catch (error) {
+      console.error("Error creating evidence bundle:");
+      console.error(formatError(error));
+      process.exit(1);
+    }
+  });
+
+/**
+ * validate-evidence command
+ */
+program
+  .command("validate-evidence")
+  .description("Validate evidence bundle integrity")
+  .argument("<path>", "Path to run directory or manifest file")
+  .action((path: string) => {
+    try {
+      // Determine if path is a run directory or manifest file
+      const isManifestFile = path.endsWith("manifest.json");
+      const result = isManifestFile
+        ? validateManifestFile(path)
+        : validateEvidenceBundle(path);
+
+      if (result.valid) {
+        console.log("Evidence bundle valid.");
+        if (result.manifest) {
+          console.log(`  intentId: ${result.manifest.intentId}`);
+          console.log(`  runId: ${result.manifest.runId}`);
+          console.log(`  jobType: ${result.manifest.jobType}`);
+          console.log(`  artifacts: ${String(result.manifest.artifacts.length)}`);
+        }
+        process.exit(0);
+      } else {
+        console.error("Evidence bundle validation failed:");
+        for (const error of result.errors) {
+          const pathInfo = error.path ? ` [${error.path}]` : "";
+          console.error(`  - [${error.code}]${pathInfo}: ${error.message}`);
+        }
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error("Validation error:");
+      console.error(formatError(error));
+      process.exit(1);
     }
   });
 
