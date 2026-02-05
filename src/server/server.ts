@@ -1,10 +1,11 @@
 /**
- * HTTP server for health endpoints and metrics.
+ * HTTP server for health endpoints, metrics, and discovery.
  *
  * Provides:
  * - /healthz (liveness)
  * - /readyz (readiness)
  * - /metrics (Prometheus)
+ * - /.well-known/agent-card.json (ERC-8004 discovery)
  */
 
 import express, { type Express, type Request, type Response } from "express";
@@ -18,6 +19,7 @@ import {
   getMetricsContentType,
   initDefaultMetrics,
 } from "../obs/metrics.js";
+import { generateAgentCard } from "../erc8004/index.js";
 
 /**
  * Rate limiter for endpoints that perform I/O.
@@ -135,6 +137,18 @@ export function createApp(config: ResolvedConfig): Express {
         ok: true,
       });
     }
+  });
+
+  /**
+   * GET /.well-known/agent-card.json - ERC-8004 Agent Discovery
+   *
+   * Returns the agent card with discovery metadata.
+   * No authentication required.
+   * Does not expose internal paths.
+   */
+  app.get("/.well-known/agent-card.json", (_req: Request, res: Response) => {
+    const card = generateAgentCard();
+    res.json(card);
   });
 
   /**
