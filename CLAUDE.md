@@ -21,8 +21,8 @@ IRSB is **not an agent**. This repo is the actor implementation that uses IRSB.
 1. **Use Beads for all work tracking.** No work without an epic + child tasks.
 2. **`000-docs/` must be strictly flat** (no subdirectories).
 3. **Docs follow `/docs-filing`** standard:
-   - Project docs: `NNN-CC-ABCD-short-description.ext`
-   - Canonical standards: `6767-[TOPIC-]CC-ABCD-short-description.ext`
+   - Project docs: `NNN-CC-ABCD-short-description.ext` (001-999)
+   - Canonical standards: `000-CC-ABCD-short-description.ext` (cross-repo, must be identical)
 4. **AAR required after every phase/PR merge**:
    - `NNN-AA-REPT-<short>.md` in `000-docs/`
 5. **No secrets in git.** `.env.example` only; redact keys/tokens from logs and docs.
@@ -97,7 +97,7 @@ Use Conventional Commits with scoped, readable messages.
 
 **Examples (copy these patterns):**
 - `chore: initialize irsb-solver scaffold`
-- `docs: add 6767 docs filing standard`
+- `docs: add 000-* canonical standards`
 - `chore(ci): add github actions pipeline`
 - `feat: add intent polling adapter`
 - `feat: implement evidence manifest hashing`
@@ -210,7 +210,7 @@ Keep modules small and testable.
 ## 6) Documentation Requirements
 
 ### 6.1 Required docs (minimum)
-- `000-docs/6767-DR-STND-document-filing-system-v4-2.md`
+- `000-docs/000-DR-STND-document-filing-system.md` (canonical, v4.3)
 - `000-docs/001-DR-INDX-repo-docs-index.md`
 - Threat model doc (when runtime is added)
 - AAR after every phase/PR merge
