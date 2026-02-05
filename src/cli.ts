@@ -430,10 +430,18 @@ program
   .option("--base-url <url>", "Base URL where agent is hosted", "http://localhost:8080")
   .option("--format <format>", "Output format: text or json", "text")
   .action((options: { dryRun: boolean; baseUrl: string; format: string }) => {
+    // Validate format option
+    if (options.format !== "text" && options.format !== "json") {
+      console.error(
+        `error: option '--format <format>' invalid choice: ${options.format} (choose from 'text', 'json')`
+      );
+      process.exit(1);
+    }
+
     const result = executeRegisterCommand({
       baseUrl: options.baseUrl,
       dryRun: options.dryRun,
-      format: options.format as "text" | "json",
+      format: options.format,
     });
 
     if (result.success) {

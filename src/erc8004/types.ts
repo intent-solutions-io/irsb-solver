@@ -82,8 +82,6 @@ export interface RegistrationPayload {
  * Configuration for generating agent card.
  */
 export interface AgentCardConfig {
-  /** Base URL where the service is hosted */
-  baseUrl: string;
   /** Optional custom agent ID (defaults to derived) */
   agentId?: string;
 }

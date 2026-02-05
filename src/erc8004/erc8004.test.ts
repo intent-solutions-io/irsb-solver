@@ -58,7 +58,7 @@ describe("Agent Card Generation", () => {
   });
 
   it("should allow custom agentId", () => {
-    const card = generateAgentCard({ baseUrl: "http://example.com", agentId: "custom-id" });
+    const card = generateAgentCard({ agentId: "custom-id" });
 
     expect(card.agentId).toBe("custom-id");
   });

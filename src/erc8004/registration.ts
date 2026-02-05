@@ -42,7 +42,7 @@ export function generateRegistration(
   options: GenerateRegistrationOptions
 ): RegistrationPayload {
   // Generate the agent card
-  const card = generateAgentCard({ baseUrl: options.baseUrl });
+  const card = generateAgentCard();
   const cardJson = serializeAgentCard(card);
   const checksum = computeAgentCardChecksum(cardJson);
 
