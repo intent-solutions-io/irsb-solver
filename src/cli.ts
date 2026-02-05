@@ -28,6 +28,18 @@ import {
   validateManifestFile,
   readManifest,
 } from "./evidence/index.js";
+import {
+  initLogger,
+  getLogger,
+  withContext,
+  summarizeInputs,
+  logError,
+  recordIntentReceived,
+  recordRefusal,
+  recordRunSuccess,
+  recordRunFailure,
+  recordError,
+} from "./obs/index.js";
 import type { NormalizedIntent } from "./types/intent.js";
 import type { RunResult } from "./execution/jobRunner.js";
 
@@ -129,15 +141,20 @@ program
   .action(async (path: string, options: { dryRun?: boolean }) => {
     let config: ResolvedConfig;
     let normalized: NormalizedIntent;
+    const startTime = Date.now();
 
-    // Load config
+    // Load config and initialize logger
     try {
       config = loadConfig();
+      initLogger(config.LOG_LEVEL);
     } catch (error) {
       console.error("Configuration error:");
       console.error(formatError(error));
       process.exit(1);
     }
+
+    // Logger initialized, ready for use
+    getLogger();
 
     // Load and normalize intent
     try {
@@ -147,8 +164,24 @@ program
     } catch (error) {
       console.error("Error processing intent:");
       console.error(formatError(error));
+      recordError("intent_parse");
       process.exit(1);
     }
+
+    // Record intent received
+    recordIntentReceived();
+
+    // Create correlation context for logging
+    const ctx = {
+      intentId: normalized.intentId,
+      jobType: normalized.jobType,
+    };
+    const logger = withContext(ctx);
+
+    logger.info(
+      { inputs: summarizeInputs(normalized.inputs as Record<string, unknown>) },
+      "Intent received"
+    );
 
     // Evaluate policy
     const policyResult = evaluatePolicy(normalized, config);
@@ -156,12 +189,22 @@ program
     // Create execution plan
     const plan = createExecutionPlan(normalized, config, policyResult);
 
+    // Update context with runId
+    const runCtx = { ...ctx, runId: plan.runId };
+    const runLogger = withContext(runCtx);
+
     // Print plan
     console.log(formatExecutionPlan(plan));
     console.log("");
 
     // If refused, write refusal record
     if (!policyResult.allowed) {
+      runLogger.warn(
+        { reasons: policyResult.reasons },
+        "Intent refused by policy"
+      );
+      recordRefusal(normalized.jobType);
+
       const refusalRecord = createRefusalRecord(
         normalized,
         plan.runId,
@@ -172,8 +215,7 @@ program
         appendJsonl(config.REFUSALS_PATH, refusalRecord);
         console.log(`Refusal recorded to: ${config.REFUSALS_PATH}`);
       } catch (error) {
-        console.error("Error writing refusal record:");
-        console.error(formatError(error));
+        logError(runLogger, error, "Error writing refusal record", runCtx);
       }
 
       process.exit(2); // Exit code 2 for policy refusal
@@ -181,17 +223,19 @@ program
 
     // Dry run mode - stop here
     if (options.dryRun) {
+      runLogger.info("Dry run mode - skipping execution");
       console.log("Dry run mode - skipping execution.");
       process.exit(0);
     }
 
     // Execute the job
+    runLogger.info("Starting job execution");
     console.log("Executing job...");
     console.log("");
 
     try {
       // Create run context
-      const ctx = createRunContext({
+      const execCtx = createRunContext({
         intentId: normalized.intentId,
         runId: plan.runId,
         jobType: normalized.jobType,
@@ -203,7 +247,8 @@ program
       const runner = getRunner(normalized.jobType);
 
       // Execute
-      const result = await runner.run(normalized.inputs, ctx);
+      const result = await runner.run(normalized.inputs, execCtx);
+      const durationMs = Date.now() - startTime;
 
       // Print result (stable JSON output)
       console.log("Run Result:");
@@ -211,7 +256,16 @@ program
       console.log("");
 
       if (result.status === "SUCCESS") {
-        console.log(`Artifacts written to: ${ctx.artifactsDir}`);
+        runLogger.info(
+          {
+            status: result.status,
+            durationMs,
+            artifactCount: result.artifacts.length,
+          },
+          "Job completed successfully"
+        );
+
+        console.log(`Artifacts written to: ${execCtx.artifactsDir}`);
         for (const artifact of result.artifacts) {
           console.log(`  - ${artifact.path} (${String(artifact.bytes)} bytes)`);
         }
@@ -234,14 +288,31 @@ program
           },
         });
 
+        // Record metrics
+        recordRunSuccess(normalized.jobType, durationMs);
+
+        runLogger.info(
+          { manifestSha256: evidenceResult.manifestSha256 },
+          "Evidence bundle created"
+        );
+
         console.log(`Evidence manifest: ${evidenceResult.manifestPath}`);
         console.log(`manifestSha256: ${evidenceResult.manifestSha256}`);
         process.exit(0);
       } else {
+        const durationMs = Date.now() - startTime;
+        runLogger.error(
+          { status: result.status, error: result.error, durationMs },
+          "Job execution failed"
+        );
+        recordRunFailure(normalized.jobType, durationMs, "execution_failed");
         console.error(`Execution failed: ${result.error ?? "Unknown error"}`);
         process.exit(3); // Exit code 3 for execution failure
       }
     } catch (error) {
+      const durationMs = Date.now() - startTime;
+      logError(runLogger, error, "Execution error", runCtx);
+      recordRunFailure(normalized.jobType, durationMs, "exception");
       console.error("Execution error:");
       console.error(formatError(error));
       process.exit(3);

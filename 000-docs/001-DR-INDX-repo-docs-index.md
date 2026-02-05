@@ -41,6 +41,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `021-PR-ADDM-phase-4-evidence-bundle-spec.md` | Product | Addendum | Phase 4 evidence bundle spec |
 | `022-DR-ADDM-phase-4-manifest-hash-determinism.md` | Documentation | Addendum | Phase 4 manifest hash and determinism |
 | `023-AA-REPT-phase-4-evidence-bundle.md` | After-Action | Report | Phase 4 AAR |
+| `024-DR-RUNB-operator-runbook.md` | Documentation | Runbook | Operator runbook for running and monitoring |
+| `025-PR-ADDM-phase-6-observability.md` | Product | Addendum | Phase 6 observability features |
 
 ---
 
@@ -73,6 +75,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [021 - Phase 4 Evidence Bundle Spec](./021-PR-ADDM-phase-4-evidence-bundle-spec.md)
 - [022 - Phase 4 Manifest Hash Determinism](./022-DR-ADDM-phase-4-manifest-hash-determinism.md)
 - [023 - Phase 4 AAR](./023-AA-REPT-phase-4-evidence-bundle.md)
+- [024 - Operator Runbook](./024-DR-RUNB-operator-runbook.md)
+- [025 - Phase 6 Observability](./025-PR-ADDM-phase-6-observability.md)
 
 ---
 
@@ -80,9 +84,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 12 |
+| Documentation | DR | 13 |
 | After-Action | AA | 8 |
-| Product | PR | 4 |
+| Product | PR | 5 |
 | Technical Model | TM | 0 |
 
 ---
