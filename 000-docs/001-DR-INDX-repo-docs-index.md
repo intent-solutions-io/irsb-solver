@@ -24,6 +24,10 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `004-DR-ADRD-irsb-solver-architecture-decisions.md` | Documentation | ADR | Architecture decisions and rationale |
 | `005-AA-REPT-phase-1-prd-adr.md` | After-Action | Report | Phase 1 PRD+ADR AAR |
 | `006-DR-GUID-ci-baseline-github-actions-codeql.md` | Documentation | Guide | CI baseline with GitHub Actions and CodeQL |
+| `007-AA-REPT-ci-baseline-github-actions-codeql.md` | After-Action | Report | CI baseline AAR |
+| `008-DR-GUID-determinism-and-reproducibility.md` | Documentation | Guide | Determinism pledge and reproducibility rules |
+| `009-DR-POLC-immutable-artifacts-policy.md` | Documentation | Policy | Immutable evidence and receipts policy |
+| `010-DR-GUID-github-repo-operations.md` | Documentation | Guide | GitHub settings and repo operations |
 
 ---
 
@@ -39,6 +43,10 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [004 - ADR: Architecture Decisions](./004-DR-ADRD-irsb-solver-architecture-decisions.md)
 - [005 - Phase 1 PRD+ADR AAR](./005-AA-REPT-phase-1-prd-adr.md)
 - [006 - CI Baseline Guide](./006-DR-GUID-ci-baseline-github-actions-codeql.md)
+- [007 - CI Baseline AAR](./007-AA-REPT-ci-baseline-github-actions-codeql.md)
+- [008 - Determinism Guide](./008-DR-GUID-determinism-and-reproducibility.md)
+- [009 - Immutable Artifacts Policy](./009-DR-POLC-immutable-artifacts-policy.md)
+- [010 - GitHub Repo Operations](./010-DR-GUID-github-repo-operations.md)
 
 ---
 
@@ -46,8 +54,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 4 |
-| After-Action | AA | 2 |
+| Documentation | DR | 7 |
+| After-Action | AA | 3 |
 | Product | PR | 1 |
 | Technical Model | TM | 0 |
 
