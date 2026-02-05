@@ -18,6 +18,8 @@
     "build": "tsc",
     "start": "node dist/main.js",
     "cli": "tsx src/cli.ts",
+    "demo": "./scripts/demo.sh",
+    "replay": "./scripts/replay.sh",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
