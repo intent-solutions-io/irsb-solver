@@ -44,6 +44,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `024-DR-RUNB-operator-runbook.md` | Documentation | Runbook | Operator runbook for running and monitoring |
 | `025-PR-ADDM-phase-6-observability.md` | Product | Addendum | Phase 6 observability features |
 | `026-AA-REPT-phase-6-observability.md` | After-Action | Report | Phase 6 AAR |
+| `027-PR-ADDM-phase-7-erc8004-discovery.md` | Product | Addendum | Phase 7 ERC-8004 discovery features |
+| `028-DR-ADDM-phase-7-erc8004-adapter-boundary.md` | Documentation | Addendum | Phase 7 ERC-8004 adapter boundary |
 
 ---
 
@@ -79,6 +81,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [024 - Operator Runbook](./024-DR-RUNB-operator-runbook.md)
 - [025 - Phase 6 Observability](./025-PR-ADDM-phase-6-observability.md)
 - [026 - Phase 6 AAR](./026-AA-REPT-phase-6-observability.md)
+- [027 - Phase 7 ERC-8004 Discovery](./027-PR-ADDM-phase-7-erc8004-discovery.md)
+- [028 - Phase 7 ERC-8004 Adapter](./028-DR-ADDM-phase-7-erc8004-adapter-boundary.md)
 
 ---
 
@@ -86,9 +90,9 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 13 |
+| Documentation | DR | 14 |
 | After-Action | AA | 9 |
-| Product | PR | 5 |
+| Product | PR | 6 |
 | Technical Model | TM | 0 |
 
 ---
