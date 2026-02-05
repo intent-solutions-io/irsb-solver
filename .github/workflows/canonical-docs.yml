@@ -1,0 +1,53 @@
+name: Canonical Docs Check
+
+on:
+  pull_request:
+    paths:
+      - '000-docs/000-*.md'
+  push:
+    branches: [main]
+    paths:
+      - '000-docs/000-*.md'
+
+jobs:
+  canonical-docs-check:
+    name: Verify Canonical Standards
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: List Canonical Docs
+        run: |
+          echo "## Canonical Documents (000-*)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| File | Checksum |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|----------|" >> $GITHUB_STEP_SUMMARY
+          for file in 000-docs/000-*.md; do
+            if [ -f "$file" ]; then
+              checksum=$(shasum -a 256 "$file" | cut -c1-16)
+              echo "| $(basename $file) | \`${checksum}...\` |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Validate Canonical Doc Format
+        run: |
+          for file in 000-docs/000-*.md; do
+            if [ -f "$file" ]; then
+              filename=$(basename "$file")
+              # Check format: 000-CC-ABCD-description.md
+              if ! echo "$filename" | grep -qE '^000-[A-Z]{2}-[A-Z]{4}-.+\.md$'; then
+                echo "::error file=$file::Invalid canonical filename format. Expected: 000-CC-ABCD-description.md"
+                exit 1
+              fi
+              echo "Valid: $filename"
+            fi
+          done
+
+      - name: Check for Legacy 6767 Files
+        run: |
+          if ls 000-docs/6767-*.md 2>/dev/null; then
+            echo "::error::Legacy 6767-* files found. These should be migrated to 000-* format."
+            exit 1
+          fi
+          echo "No legacy 6767-* files found."

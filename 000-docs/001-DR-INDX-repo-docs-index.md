@@ -2,7 +2,7 @@
 
 **Document ID:** 001-DR-INDX-repo-docs-index
 **Repository:** irsb-solver
-**Last Updated:** 2026-02-04
+**Last Updated:** 2026-02-05
 **Timezone:** America/Chicago
 
 ---
@@ -17,7 +17,7 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Filename | Category | Type | Purpose |
 |----------|----------|------|---------|
-| `6767-DR-STND-document-filing-system-v4-2.md` | Documentation | Standard | Canonical document filing standard v4.2 |
+| `000-DR-STND-document-filing-system.md` | Documentation | Standard | Canonical document filing standard v4.3 (cross-repo) |
 | `001-DR-INDX-repo-docs-index.md` | Documentation | Index | This file - repository document catalog |
 | `002-AA-REPT-phase-1-repo-scaffold-docs-filing.md` | After-Action | Report | Phase 1 AAR |
 | `003-PR-PRDC-irsb-solver-reference-executor.md` | Product | PRD | Product requirements for reference executor |
@@ -33,8 +33,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 ## Quick Links
 
-### Standards (6767)
-- [Document Filing System v4.2](./6767-DR-STND-document-filing-system-v4-2.md)
+### Canonical Standards (000-*)
+- [Document Filing System v4.3](./000-DR-STND-document-filing-system.md)
 
 ### Project Documents (NNN)
 - [001 - Repo Docs Index](./001-DR-INDX-repo-docs-index.md) (this file)

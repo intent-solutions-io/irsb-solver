@@ -1,8 +1,8 @@
-# DOCUMENT FILING SYSTEM STANDARD v4.2 (LLM/AI-ASSISTANT FRIENDLY)
+# DOCUMENT FILING SYSTEM STANDARD v4.3 (LLM/AI-ASSISTANT FRIENDLY)
 
-**Document ID:** 6767-DR-STND-document-filing-system-v4-2
-**Version:** 4.2
-**Applies To:** This repository (irsb-solver)
+**Document ID:** 000-DR-STND-document-filing-system
+**Version:** 4.3
+**Applies To:** All IRSB repositories (canonical cross-repo standard)
 **Default Timezone:** America/Chicago
 **Status:** Active
 
@@ -12,8 +12,8 @@
 
 This standard defines how documents are named and organized in `000-docs/`. The system is designed to be:
 - **Flat**: No subdirectories under `000-docs/`
-- **Chronological**: Project docs use sequential numbering
-- **Canonical**: Standards use fixed prefix `6767`
+- **Chronological**: Project docs use sequential numbering (001-999)
+- **Canonical**: Cross-repo standards use `000-*` prefix
 - **Parseable**: Both humans and LLMs can extract metadata from filenames
 
 ---
@@ -22,10 +22,10 @@ This standard defines how documents are named and organized in `000-docs/`. The 
 
 ```
 000-docs/           # FLAT - no subdirectories allowed
-├── 6767-*.md       # Canonical standards (prefix never changes)
+├── 000-*.md        # Canonical standards (cross-repo, must be identical)
 ├── 001-*.md        # First project doc
 ├── 002-*.md        # Second project doc
-└── NNN-*.md        # Nth project doc (chronological)
+└── NNN-*.md        # Nth project doc (chronological, 001-999)
 ```
 
 **Hard Rule:** `000-docs/` must remain strictly flat. No nested folders.
@@ -34,13 +34,13 @@ This standard defines how documents are named and organized in `000-docs/`. The 
 
 ## 3. Filename Families
 
-### 3.1 Project Documents
+### 3.1 Project Documents (001-999)
 
 Format: `NNN-CC-ABCD-short-description.ext`
 
 | Component | Description | Example |
 |-----------|-------------|---------|
-| `NNN` | 3-digit sequence number (chronological) | `001`, `042`, `999` |
+| `NNN` | 3-digit sequence number (chronological, 001-999) | `001`, `042`, `999` |
 | `CC` | 2-letter category code (see §4) | `DR`, `AA`, `TM` |
 | `ABCD` | 4-letter type code (see §5) | `INDX`, `REPT`, `SPEC` |
 | `short-description` | Kebab-case description | `repo-docs-index` |
@@ -51,21 +51,22 @@ Format: `NNN-CC-ABCD-short-description.ext`
 - `002-AA-REPT-phase-1-scaffold.md`
 - `003-TM-SPEC-threat-model-v1.md`
 
-### 3.2 Canonical Standards
+### 3.2 Canonical Standards (000-*)
 
-Format: `6767-[TOPIC-]CC-ABCD-short-description.ext`
+Format: `000-CC-ABCD-short-description.ext`
 
 | Component | Description | Example |
 |-----------|-------------|---------|
-| `6767` | Fixed prefix (never changes) | `6767` |
-| `[TOPIC-]` | Optional topic qualifier | `DOCS-`, `SEC-` |
+| `000` | Fixed prefix for canonical standards | `000` |
 | `CC` | 2-letter category code | `DR`, `TM` |
 | `ABCD` | 4-letter type code | `STND`, `SPEC` |
-| `short-description` | Kebab-case description | `document-filing-system-v4-2` |
+| `short-description` | Kebab-case description | `document-filing-system` |
+
+**Canonical standards MUST be identical across all repos.** Use drift checking to verify.
 
 **Examples:**
-- `6767-DR-STND-document-filing-system-v4-2.md` (this file)
-- `6767-SEC-STND-secrets-handling.md`
+- `000-DR-STND-document-filing-system.md` (this file)
+- `000-TM-STND-secrets-handling.md`
 
 ---
 
@@ -80,6 +81,7 @@ Format: `6767-[TOPIC-]CC-ABCD-short-description.ext`
 | `OP` | Operations | Runbooks, playbooks |
 | `RP` | Report | Status reports, audits |
 | `PL` | Plan | Project plans, roadmaps |
+| `PR` | Product | PRDs, requirements |
 
 ---
 
@@ -95,23 +97,55 @@ Format: `6767-[TOPIC-]CC-ABCD-short-description.ext`
 | `RUNB` | Runbook | Operational procedures |
 | `ARCH` | Architecture | Architecture docs, ADRs |
 | `MODL` | Model | Threat models, data models |
+| `PRDC` | Product | PRDs, requirements docs |
+| `POLC` | Policy | Policies, governance |
+| `ADRD` | ADR Decision | Architecture decision records |
 
 ---
 
 ## 6. Sequencing Rules
 
-1. **Project docs**: Assign next available `NNN` (001, 002, 003...)
-2. **Standards**: Always use `6767` prefix (does not increment)
+1. **Canonical standards (000-*)**: Reserved for cross-repo standards. Content must be identical across all repos.
+2. **Project docs (001-999)**: Assign next available number chronologically.
 3. **No gaps**: If `003` exists, next is `004`
 4. **No reuse**: Deleted doc numbers are not reused
 
 ---
 
-## 7. Examples Table
+## 7. Cross-Repo Synchronization
+
+### 7.1 Canonical Standard Management
+
+- **Source of truth**: `irsb-solver` is the canonical source for all `000-*` files
+- **Synchronization**: Other repos copy from source and verify checksums
+- **Drift detection**: CI checks ensure canonical files are identical across repos
+
+### 7.2 Drift Check Script
+
+Each repo should have `scripts/check-canonical-drift.sh`:
+
+```bash
+#!/bin/bash
+# Check that 000-* files match the canonical source
+
+CANONICAL_REPO="irsb-solver"
+CANONICAL_DIR="000-docs"
+
+for file in 000-docs/000-*.md; do
+  if [ -f "$file" ]; then
+    local_sum=$(shasum -a 256 "$file" | cut -d' ' -f1)
+    echo "Checking $file: $local_sum"
+  fi
+done
+```
+
+---
+
+## 8. Examples Table
 
 | Filename | Purpose |
 |----------|---------|
-| `6767-DR-STND-document-filing-system-v4-2.md` | This standard |
+| `000-DR-STND-document-filing-system.md` | This standard (canonical) |
 | `001-DR-INDX-repo-docs-index.md` | Repository document index |
 | `002-AA-REPT-phase-1-scaffold.md` | Phase 1 after-action report |
 | `003-TM-MODL-threat-model-v1.md` | Threat model document |
@@ -119,20 +153,21 @@ Format: `6767-[TOPIC-]CC-ABCD-short-description.ext`
 
 ---
 
-## 8. Validation Checklist
+## 9. Validation Checklist
 
 Before committing a new doc to `000-docs/`:
 
-- [ ] Filename matches pattern `NNN-CC-ABCD-*.ext` or `6767-*`
+- [ ] Filename matches pattern `NNN-CC-ABCD-*.ext` (001-999) or `000-CC-ABCD-*.ext`
 - [ ] `000-docs/` remains flat (no subdirectories created)
 - [ ] Sequence number is next available (no gaps, no reuse)
 - [ ] Category code (CC) is from approved list
 - [ ] Type code (ABCD) is from approved list
 - [ ] Description is kebab-case and meaningful
+- [ ] For `000-*` files: content matches canonical source
 
 ---
 
-## 9. LLM/AI Integration Notes
+## 10. LLM/AI Integration Notes
 
 This standard is designed for AI assistants:
 - Filenames are self-documenting
@@ -142,10 +177,10 @@ This standard is designed for AI assistants:
 
 **Extraction regex:**
 ```regex
-^(\d{3}|6767)-([A-Z]{2})-([A-Z]{4})-(.+)\.(\w+)$
+^(\d{3})-([A-Z]{2})-([A-Z]{4})-(.+)\.(\w+)$
 ```
 
-Groups: (1) sequence/prefix, (2) category, (3) type, (4) description, (5) extension
+Groups: (1) sequence, (2) category, (3) type, (4) description, (5) extension
 
 ---
 
@@ -153,6 +188,7 @@ Groups: (1) sequence/prefix, (2) category, (3) type, (4) description, (5) extens
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 4.3 | 2026-02-05 | Migrated from 6767 to 000-* prefix; added cross-repo sync rules |
 | 4.2 | 2025-02-04 | Initial version for irsb-solver |
 
 ---
