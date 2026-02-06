@@ -46,17 +46,66 @@ This enables:
 
 ## Current Status
 
-**Phase 1: Scaffold** - Repository structure and tooling baseline.
+**Phase 8: Production Hardening** - E2E demo, replay determinism, security documentation.
 
-## Next Phases
+## Quickstart Demo
 
-- Phase 2: Intent schema + config + CLI
-- Phase 3: Evidence bundle + hashing
-- Phase 4: Receipt builder + submitter
-- Phase 5: Policy engine (allowlists, budgets, risk gates)
-- Phase 6: Integration testing
-- Phase 7: Observability (metrics, logging)
-- Phase 8: Production hardening
+Run the complete solver demo in one command:
+
+```bash
+pnpm install
+pnpm demo
+```
+
+This will:
+1. Validate configuration
+2. Run a sample intent fixture
+3. Generate evidence bundle with artifacts
+4. Verify evidence integrity
+
+## Replay Determinism
+
+Verify that the solver produces identical results across runs:
+
+```bash
+pnpm replay
+```
+
+This script:
+1. Runs the same fixture twice in isolated directories
+2. Compares run IDs, artifact hashes, and manifest hashes
+3. Verifies deterministic execution (excluding timestamps)
+
+See [Determinism Pledge](#determinism-pledge) for design principles.
+
+## ERC-8004 Discovery
+
+The solver exposes a standard agent card for service discovery:
+
+```bash
+# Start the server
+pnpm start
+
+# Fetch agent card
+curl http://localhost:3000/.well-known/agent-card.json
+```
+
+The agent card declares:
+- Service identity (`irsb-solver@0.1.0`)
+- Capabilities (`intent-execution`, `evidence-generation`, `receipt-submission`)
+- Endpoints (health, metrics, execute=N/A for non-interactive service)
+
+Note: This solver borrows only the discovery/registration shapes from ERC-8004. It is **not** an LLM chat agent.
+
+## Security
+
+See the [Threat Model](./000-docs/030-DR-THMD-threat-model-v0.md) for:
+- Asset classification
+- Trust boundaries
+- Threat analysis and mitigations
+- Current security posture
+
+See the [Security Hardening Checklist](./000-docs/031-DR-CHKL-security-hardening-checklist.md) for production deployment requirements.
 
 ## Local Development
 

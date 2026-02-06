@@ -47,6 +47,10 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 | `027-PR-ADDM-phase-7-erc8004-discovery.md` | Product | Addendum | Phase 7 ERC-8004 discovery features |
 | `028-DR-ADDM-phase-7-erc8004-adapter-boundary.md` | Documentation | Addendum | Phase 7 ERC-8004 adapter boundary |
 | `029-AA-REPT-phase-7-erc8004-stubs.md` | After-Action | Report | Phase 7 AAR |
+| `030-DR-THMD-threat-model-v0.md` | Documentation | Threat Model | Initial threat model for solver |
+| `031-DR-CHKL-security-hardening-checklist.md` | Documentation | Checklist | Security hardening checklist |
+| `032-DR-ADDM-cross-repo-alignment-solver-watchtower-protocol.md` | Documentation | Addendum | Cross-repo alignment (solver/watchtower/protocol) |
+| `033-AA-REPT-phase-8-e2e-hardening.md` | After-Action | Report | Phase 8 AAR |
 
 ---
 
@@ -85,6 +89,10 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 - [027 - Phase 7 ERC-8004 Discovery](./027-PR-ADDM-phase-7-erc8004-discovery.md)
 - [028 - Phase 7 ERC-8004 Adapter](./028-DR-ADDM-phase-7-erc8004-adapter-boundary.md)
 - [029 - Phase 7 AAR](./029-AA-REPT-phase-7-erc8004-stubs.md)
+- [030 - Threat Model v0](./030-DR-THMD-threat-model-v0.md)
+- [031 - Security Hardening Checklist](./031-DR-CHKL-security-hardening-checklist.md)
+- [032 - Cross-Repo Alignment](./032-DR-ADDM-cross-repo-alignment-solver-watchtower-protocol.md)
+- [033 - Phase 8 AAR](./033-AA-REPT-phase-8-e2e-hardening.md)
 
 ---
 
@@ -92,8 +100,8 @@ This index catalogs all documents in `000-docs/`. It is updated whenever documen
 
 | Category | Code | Count |
 |----------|------|-------|
-| Documentation | DR | 14 |
-| After-Action | AA | 10 |
+| Documentation | DR | 17 |
+| After-Action | AA | 11 |
 | Product | PR | 6 |
 | Technical Model | TM | 0 |
 
