@@ -66,11 +66,11 @@ INTENT_ID=$(echo "$RUN_OUTPUT" | grep -oP 'intentId:\s*\K[^\s]+' | head -1 || ec
 RUN_ID=$(echo "$RUN_OUTPUT" | grep -oP 'runId:\s*\K[^\s]+' | head -1 || echo "")
 MANIFEST_SHA=$(echo "$RUN_OUTPUT" | grep -oP 'manifestSha256:\s*\K[a-f0-9]+' | head -1 || echo "")
 
-# Find run directory (any subdirectory under runs/)
-RUN_DIR=$(find "$DEMO_DIR/runs" -mindepth 1 -maxdepth 1 -type d | head -1)
+# Construct run directory using extracted RUN_ID
+RUN_DIR="$DEMO_DIR/runs/$RUN_ID"
 
-if [ -z "$RUN_DIR" ]; then
-    echo -e "  ${RED}✗ Run directory not found${NC}"
+if [ -z "$RUN_ID" ] || [ ! -d "$RUN_DIR" ]; then
+    echo -e "  ${RED}✗ Run directory not found for RUN_ID: $RUN_ID${NC}"
     exit 1
 fi
 

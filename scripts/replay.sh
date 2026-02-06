@@ -49,9 +49,13 @@ RUN_A_OUTPUT=$(pnpm cli -- run-fixture "$FIXTURE" 2>&1) || {
 }
 echo -e "  ${GREEN}✓ Completed${NC}"
 
-# Find run directory for A
-RUN_DIR_A=$(find "$DIR_A/runs" -mindepth 1 -maxdepth 1 -type d | head -1)
-RUN_ID_A=$(basename "$RUN_DIR_A")
+# Extract run ID from output and construct path
+RUN_ID_A=$(echo "$RUN_A_OUTPUT" | grep -oP 'runId:\s*\K[^\s]+' | head -1 || echo "")
+RUN_DIR_A="$DIR_A/runs/$RUN_ID_A"
+if [ -z "$RUN_ID_A" ] || [ ! -d "$RUN_DIR_A" ]; then
+    echo -e "  ${RED}✗ Run directory not found for RUN_ID_A: $RUN_ID_A${NC}"
+    exit 1
+fi
 echo "  RunID: $RUN_ID_A"
 
 # Run B
@@ -67,9 +71,13 @@ RUN_B_OUTPUT=$(pnpm cli -- run-fixture "$FIXTURE" 2>&1) || {
 }
 echo -e "  ${GREEN}✓ Completed${NC}"
 
-# Find run directory for B
-RUN_DIR_B=$(find "$DIR_B/runs" -mindepth 1 -maxdepth 1 -type d | head -1)
-RUN_ID_B=$(basename "$RUN_DIR_B")
+# Extract run ID from output and construct path
+RUN_ID_B=$(echo "$RUN_B_OUTPUT" | grep -oP 'runId:\s*\K[^\s]+' | head -1 || echo "")
+RUN_DIR_B="$DIR_B/runs/$RUN_ID_B"
+if [ -z "$RUN_ID_B" ] || [ ! -d "$RUN_DIR_B" ]; then
+    echo -e "  ${RED}✗ Run directory not found for RUN_ID_B: $RUN_ID_B${NC}"
+    exit 1
+fi
 echo "  RunID: $RUN_ID_B"
 
 echo ""
