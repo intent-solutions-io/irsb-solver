@@ -1,5 +1,7 @@
 # CLAUDE.md — IRSB Solver (Reference Executor)
 
+> **AI Context**: For ecosystem-wide reference (contracts, deployments, concepts, glossary), see [../AI-CONTEXT.md](../AI-CONTEXT.md)
+
 This file defines how Claude Code must operate in this repo. Treat it as binding.
 
 ---
