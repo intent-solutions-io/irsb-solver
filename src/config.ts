@@ -65,6 +65,14 @@ export const ConfigSchema = z.object({
   RECEIPTS_PATH: z.string().optional(),
   REFUSALS_PATH: z.string().optional(),
   EVIDENCE_DIR: z.string().optional(),
+
+  // Agent Passkey (signing service)
+  AGENT_PASSKEY_ENDPOINT: z
+    .string()
+    .url()
+    .default("https://irsb-agent-passkey-308207955734.us-central1.run.app"),
+  AGENT_PASSKEY_AUTH_TOKEN: z.string().optional(),
+  AGENT_PASSKEY_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
 });
 
 /**
@@ -83,6 +91,11 @@ export interface ResolvedConfig {
   RECEIPTS_PATH: string;
   REFUSALS_PATH: string;
   EVIDENCE_DIR: string;
+
+  // Agent Passkey
+  AGENT_PASSKEY_ENDPOINT: string;
+  AGENT_PASSKEY_AUTH_TOKEN?: string | undefined;
+  AGENT_PASSKEY_TIMEOUT_MS: number;
 }
 
 /**
@@ -130,6 +143,9 @@ export function loadConfig(): ResolvedConfig {
     RECEIPTS_PATH: parsed.RECEIPTS_PATH ?? resolve(dataDir, "receipts.jsonl"),
     REFUSALS_PATH: parsed.REFUSALS_PATH ?? resolve(dataDir, "refusals.jsonl"),
     EVIDENCE_DIR: parsed.EVIDENCE_DIR ?? resolve(dataDir, "evidence"),
+    AGENT_PASSKEY_ENDPOINT: parsed.AGENT_PASSKEY_ENDPOINT,
+    AGENT_PASSKEY_AUTH_TOKEN: parsed.AGENT_PASSKEY_AUTH_TOKEN,
+    AGENT_PASSKEY_TIMEOUT_MS: parsed.AGENT_PASSKEY_TIMEOUT_MS,
   };
 }
 
@@ -151,5 +167,10 @@ export function configSummary(config: ResolvedConfig): Record<string, unknown> {
     RECEIPTS_PATH: config.RECEIPTS_PATH,
     REFUSALS_PATH: config.REFUSALS_PATH,
     EVIDENCE_DIR: config.EVIDENCE_DIR,
+    AGENT_PASSKEY_ENDPOINT: config.AGENT_PASSKEY_ENDPOINT,
+    AGENT_PASSKEY_AUTH_TOKEN: config.AGENT_PASSKEY_AUTH_TOKEN
+      ? "(set)"
+      : "(not set)",
+    AGENT_PASSKEY_TIMEOUT_MS: config.AGENT_PASSKEY_TIMEOUT_MS,
   };
 }

@@ -27,6 +27,8 @@ const baseConfig: ResolvedConfig = {
   RECEIPTS_PATH: "./data/receipts.jsonl",
   REFUSALS_PATH: "./data/refusals.jsonl",
   EVIDENCE_DIR: "./data/evidence",
+  AGENT_PASSKEY_ENDPOINT: "https://irsb-agent-passkey-308207955734.us-central1.run.app",
+  AGENT_PASSKEY_TIMEOUT_MS: 30000,
 };
 
 describe("evaluatePolicy", () => {

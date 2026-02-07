@@ -36,6 +36,8 @@ const testConfig: ResolvedConfig = {
   RECEIPTS_PATH: `${TEST_DATA_DIR}/receipts.jsonl`,
   REFUSALS_PATH: `${TEST_DATA_DIR}/refusals.jsonl`,
   EVIDENCE_DIR: `${TEST_DATA_DIR}/evidence`,
+  AGENT_PASSKEY_ENDPOINT: "https://irsb-agent-passkey-308207955734.us-central1.run.app",
+  AGENT_PASSKEY_TIMEOUT_MS: 30000,
 };
 
 describe("Agent Card Generation", () => {
