@@ -173,41 +173,46 @@ If you change stack:
 - `src/execution/` workflow runners + sandbox hooks
 - `src/evidence/` evidence manifest + hashing + stores
 - `src/receipts/` receipt builder + submitter
-- `src/signing/` signing client (agent-passkey integration)
+- `src/signing/` signing client (Cloud KMS primary, agent-passkey legacy)
+- `src/execution/` workflow runners, x402 facilitator
 - `src/policy/` allowlists/budgets/risk gates
 - `src/cli.ts` small utilities
 - `000-docs/` flat docs
 - `.github/workflows/` CI
 
-### 4.3 Signing Integration (Agent Passkey)
+### 4.3 Signing Architecture
 
-**Do NOT implement local signing.** Use the centralized `irsb-agent-passkey` service.
+The solver supports two signing paths:
 
-**Agent Passkey Endpoint:** `https://irsb-agent-passkey-308207955734.us-central1.run.app`
+**Primary: Cloud KMS (recommended)**
+- Direct signing via Google Cloud KMS
+- On-chain policy enforcement through EIP-7702 caveat enforcers (spend limits, time windows, allowed targets)
+- <100ms latency per signature
+- Implementation: `src/signing/kms-signer.ts`
 
-The solver submits typed actions (`SUBMIT_RECEIPT`) to agent-passkey, which:
-- Validates policy (role authorization, spend caps, velocity limits)
-- Builds the full transaction (owns nonce management)
-- Signs with Lit Protocol PKP (2/3 threshold signatures across TEE nodes)
-- Returns signed transaction or broadcasts directly
+**Legacy: Agent Passkey**
+- Threshold signatures via Lit Protocol PKP (2/3 TEE nodes)
+- Off-chain policy checks in agent-passkey service
+- 1-2s latency per signature
+- Still functional but deprecated — no new feature development
 
 ```typescript
-// Example client usage (src/signing/client.ts)
-import { AgentPasskeyClient } from './client';
+// Primary: Cloud KMS signer (src/signing/kms-signer.ts)
+import { createKmsSigner } from './signing/kms-signer';
 
-const client = new AgentPasskeyClient({
-  endpoint: process.env.AGENT_PASSKEY_URL,
-  authToken: process.env.SOLVER_AUTH_TOKEN,
+const signer = createKmsSigner({
+  keyName: process.env.KMS_KEY_NAME,
+  projectId: process.env.GCP_PROJECT_ID,
 });
 
-const result = await client.submitReceipt({
-  intentId: '0x...',
-  receiptHash: '0x...',
-  evidenceHash: '0x...',
-});
+// Facilitator handles x402 payment settlement with delegation
+// src/execution/facilitator.ts
+import { X402Facilitator } from './execution/facilitator';
 ```
 
-See `../agent-passkey/CLAUDE.md` for API details.
+**Key env vars:** `SIGNING_MODE` (`kms` | `agent-passkey`), `KMS_KEY_NAME`, `GCP_PROJECT_ID`
+
+See `protocol/000-docs/030-DR-ARCH-eip7702-delegation-architecture.md` for the migration ADR.
 
 Keep modules small and testable.
 
