@@ -171,16 +171,17 @@ export class FacilitatorClient {
     //   args: [paymentHash],
     // });
     // return result as boolean;
+    await Promise.resolve();
     throw new Error('FacilitatorClient.isSettled() not yet implemented');
   }
 }
 
 // ============ ABI Encoding Helpers ============
 
-// Function selectors
-const SETTLE_PAYMENT_SELECTOR = '0x' as Hex; // settlePayment(SettlementParams)
-const SETTLE_DELEGATED_SELECTOR = '0x' as Hex; // settleDelegated(bytes32,SettlementParams)
-const BATCH_SETTLE_SELECTOR = '0x' as Hex; // batchSettle(SettlementParams[])
+// Function selectors (placeholder — compute from ABI when integrating viem)
+const SETTLE_PAYMENT_SELECTOR = '0x00000001' as Hex; // settlePayment(SettlementParams)
+const SETTLE_DELEGATED_SELECTOR = '0x00000002' as Hex; // settleDelegated(bytes32,SettlementParams)
+const BATCH_SETTLE_SELECTOR = '0x00000003' as Hex; // batchSettle(SettlementParams[])
 
 /**
  * Encode settlePayment calldata
@@ -213,12 +214,17 @@ function encodeBatchSettle(paramsList: SettlementParams[]): Hex {
 }
 
 /**
- * Create a FacilitatorClient from environment variables
+ * Create a FacilitatorClient from resolved config
  */
-export function createFacilitatorClientFromEnv(): FacilitatorClient {
-  const facilitatorAddress = process.env['X402_FACILITATOR_ADDRESS'] as Hex | undefined;
-  const walletDelegateAddress = process.env['WALLET_DELEGATE_ADDRESS'] as Hex | undefined;
-  const rpcUrl = process.env['RPC_URL'];
+export function createFacilitatorClient(config: {
+  X402_FACILITATOR_ADDRESS?: string;
+  WALLET_DELEGATE_ADDRESS?: string;
+  RPC_URL?: string;
+  CHAIN_ID: number;
+}): FacilitatorClient {
+  const facilitatorAddress = config.X402_FACILITATOR_ADDRESS as Hex | undefined;
+  const walletDelegateAddress = config.WALLET_DELEGATE_ADDRESS as Hex | undefined;
+  const rpcUrl = config.RPC_URL;
 
   if (!facilitatorAddress || !walletDelegateAddress || !rpcUrl) {
     throw new Error(
@@ -230,6 +236,6 @@ export function createFacilitatorClientFromEnv(): FacilitatorClient {
     facilitatorAddress,
     walletDelegateAddress,
     rpcUrl,
-    chainId: parseInt(process.env['CHAIN_ID'] ?? '11155111', 10),
+    chainId: config.CHAIN_ID,
   });
 }

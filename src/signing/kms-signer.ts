@@ -99,13 +99,8 @@ export class KmsSigner {
    * Get the KMS key resource name
    */
   getKeyResourceName(): string {
-    return (
-      `projects/${this.config.projectId}` +
-      `/locations/${this.config.location}` +
-      `/keyRings/${this.config.keyring}` +
-      `/cryptoKeys/${this.config.key}` +
-      `/cryptoKeyVersions/${this.config.keyVersion}`
-    );
+    const { projectId, location, keyring, key, keyVersion } = this.config;
+    return `projects/${projectId}/locations/${location}/keyRings/${keyring}/cryptoKeys/${key}/cryptoKeyVersions/${keyVersion}`;
   }
 
   /**
@@ -126,6 +121,7 @@ export class KmsSigner {
     // this.cachedAddress = address;
     // return address;
 
+    await Promise.resolve();
     throw new Error(
       `KmsSigner: getSignerAddress() not yet implemented. ` +
       `Key: ${this.getKeyResourceName()}. ` +
@@ -151,6 +147,7 @@ export class KmsSigner {
     // });
     // return parseKmsSignature(result.signature, digest);
 
+    await Promise.resolve();
     throw new Error(
       `KmsSigner: signDigest() not yet implemented. ` +
       `Digest: ${digest.slice(0, 10)}... ` +
@@ -172,33 +169,32 @@ export class KmsSigner {
 }
 
 /**
- * Create a KMS signer from environment variables
- *
- * Environment variables:
- * - KMS_PROJECT_ID (required)
- * - KMS_LOCATION (default: 'us-central1')
- * - KMS_KEYRING (required)
- * - KMS_KEY (required)
- * - KMS_KEY_VERSION (default: '1')
- * - KMS_CHAIN_ID (default: 11155111)
+ * Create a KMS signer from resolved config
  */
-export function createKmsSignerFromEnv(): KmsSigner {
-  const projectId = process.env['KMS_PROJECT_ID'];
-  const keyring = process.env['KMS_KEYRING'];
-  const key = process.env['KMS_KEY'];
+export function createKmsSigner(config: {
+  KMS_PROJECT_ID?: string;
+  KMS_LOCATION: string;
+  KMS_KEYRING?: string;
+  KMS_KEY?: string;
+  KMS_KEY_VERSION: string;
+  CHAIN_ID: number;
+}): KmsSigner {
+  const projectId = config.KMS_PROJECT_ID;
+  const keyring = config.KMS_KEYRING;
+  const key = config.KMS_KEY;
 
   if (!projectId || !keyring || !key) {
     throw new Error(
-      'KMS signer requires KMS_PROJECT_ID, KMS_KEYRING, and KMS_KEY environment variables'
+      'KMS signer requires KMS_PROJECT_ID, KMS_KEYRING, and KMS_KEY in config'
     );
   }
 
   return new KmsSigner({
     projectId,
-    location: process.env['KMS_LOCATION'] ?? 'us-central1',
+    location: config.KMS_LOCATION,
     keyring,
     key,
-    keyVersion: process.env['KMS_KEY_VERSION'] ?? '1',
-    chainId: parseInt(process.env['KMS_CHAIN_ID'] ?? '11155111', 10),
+    keyVersion: config.KMS_KEY_VERSION,
+    chainId: config.CHAIN_ID,
   });
 }

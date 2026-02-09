@@ -89,6 +89,18 @@ export const ConfigSchema = z.object({
   X402_FACILITATOR_ADDRESS: z.string().optional(),
   RPC_URL: z.string().url().optional(),
   CHAIN_ID: z.coerce.number().int().positive().default(11155111),
+}).superRefine((data, ctx) => {
+  if (data.SIGNING_MODE === 'kms') {
+    if (!data.KMS_PROJECT_ID) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'KMS_PROJECT_ID is required when SIGNING_MODE=kms', path: ['KMS_PROJECT_ID'] });
+    }
+    if (!data.KMS_KEYRING) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'KMS_KEYRING is required when SIGNING_MODE=kms', path: ['KMS_KEYRING'] });
+    }
+    if (!data.KMS_KEY) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'KMS_KEY is required when SIGNING_MODE=kms', path: ['KMS_KEY'] });
+    }
+  }
 });
 
 /**
