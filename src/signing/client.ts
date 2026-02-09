@@ -165,7 +165,7 @@ export class AgentPasskeyClient {
     };
 
     if (this.config.authToken) {
-      headers['Authorization'] = `Bearer ${this.config.authToken}`;
+      headers.Authorization = `Bearer ${this.config.authToken}`;
     }
 
     return headers;
@@ -186,7 +186,7 @@ export class AgentPasskeyClient {
       const error = await response.text();
       return {
         success: false,
-        error: `Agent-passkey request failed: ${response.status} ${error}`,
+        error: `Agent-passkey request failed: ${String(response.status)} ${error}`,
       };
     }
 
@@ -203,12 +203,12 @@ export class AgentPasskeyClient {
  * - AGENT_PASSKEY_TIMEOUT_MS (default: 30000)
  */
 export function createAgentPasskeyClientFromEnv(): AgentPasskeyClient {
-  const authToken = process.env['AGENT_PASSKEY_AUTH_TOKEN'];
+  const authToken = process.env.AGENT_PASSKEY_AUTH_TOKEN;
   return new AgentPasskeyClient({
     endpoint:
-      process.env['AGENT_PASSKEY_ENDPOINT'] ??
+      process.env.AGENT_PASSKEY_ENDPOINT ??
       'https://irsb-agent-passkey-308207955734.us-central1.run.app',
     ...(authToken ? { authToken } : {}),
-    timeoutMs: parseInt(process.env['AGENT_PASSKEY_TIMEOUT_MS'] ?? '30000', 10),
+    timeoutMs: parseInt(process.env.AGENT_PASSKEY_TIMEOUT_MS ?? '30000', 10),
   });
 }
