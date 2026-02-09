@@ -216,7 +216,7 @@ See `protocol/000-docs/030-DR-ARCH-eip7702-delegation-architecture.md` for the m
 
 Keep modules small and testable.
 
-### 4.3 Testing rules
+### 4.4 Testing rules
 - No live RPC or external network calls in CI tests.
 - Use fakes/mocks for chain clients.
 - Add tests for:
