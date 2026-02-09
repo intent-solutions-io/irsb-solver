@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+---
+
+## [0.2.0] - 2026-02-08
+
+### Added
+- AgentPasskeyClient for receipt submission via agent-passkey service
+- Agent-passkey signing integration guidance documentation
+- AI-CONTEXT.md cross-reference in CLAUDE.md
+
+### Documentation
+- Signing integration guidance for agent-passkey service
+
+---
+
 ## [0.1.0] - 2026-02-05
 
 ### Added
@@ -68,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial repository creation
 - Placeholder entry point (`src/index.ts`)
 
-[Unreleased]: https://github.com/intent-solutions-io/irsb-solver/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/intent-solutions-io/irsb-solver/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/intent-solutions-io/irsb-solver/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/intent-solutions-io/irsb-solver/compare/v0.0.0...v0.1.0
 [0.0.0]: https://github.com/intent-solutions-io/irsb-solver/releases/tag/v0.0.0
