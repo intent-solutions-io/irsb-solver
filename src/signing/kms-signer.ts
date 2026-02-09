@@ -159,12 +159,9 @@ export class KmsSigner {
    * Check if the KMS key is accessible
    */
   async isHealthy(): Promise<boolean> {
-    try {
-      await this.getSignerAddress();
-      return true;
-    } catch {
-      return false;
-    }
+    // Will throw until getSignerAddress() is implemented
+    await this.getSignerAddress();
+    return true;
   }
 }
 

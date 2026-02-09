@@ -162,7 +162,7 @@ export class FacilitatorClient {
   /**
    * Check if a payment has been settled
    */
-  async isSettled(_paymentHash: Hex): Promise<boolean> {
+  isSettled(_paymentHash: Hex): Promise<boolean> {
     // TODO: Implement with viem readContract
     // const result = await publicClient.readContract({
     //   address: this.config.facilitatorAddress,
@@ -171,8 +171,7 @@ export class FacilitatorClient {
     //   args: [paymentHash],
     // });
     // return result as boolean;
-    await Promise.resolve();
-    throw new Error('FacilitatorClient.isSettled() not yet implemented');
+    return Promise.reject(new Error('FacilitatorClient.isSettled() not yet implemented'));
   }
 }
 

@@ -29,6 +29,10 @@ const baseConfig: ResolvedConfig = {
   EVIDENCE_DIR: "./data/evidence",
   AGENT_PASSKEY_ENDPOINT: "https://irsb-agent-passkey-308207955734.us-central1.run.app",
   AGENT_PASSKEY_TIMEOUT_MS: 30000,
+  SIGNING_MODE: "agent-passkey",
+  KMS_LOCATION: "us-central1",
+  KMS_KEY_VERSION: "1",
+  CHAIN_ID: 11155111,
 };
 
 const allowedPolicy: PolicyResult = {

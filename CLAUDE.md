@@ -201,16 +201,20 @@ The solver supports two signing paths:
 import { createKmsSigner } from './signing/kms-signer';
 
 const signer = createKmsSigner({
-  keyName: process.env.KMS_KEY_NAME,
-  projectId: process.env.GCP_PROJECT_ID,
+  KMS_PROJECT_ID: process.env.KMS_PROJECT_ID,
+  KMS_LOCATION: process.env.KMS_LOCATION ?? 'us-central1',
+  KMS_KEYRING: process.env.KMS_KEYRING,
+  KMS_KEY: process.env.KMS_KEY,
+  KMS_KEY_VERSION: process.env.KMS_KEY_VERSION ?? '1',
+  CHAIN_ID: Number(process.env.CHAIN_ID ?? '11155111'),
 });
 
 // Facilitator handles x402 payment settlement with delegation
 // src/execution/facilitator.ts
-import { X402Facilitator } from './execution/facilitator';
+import { createFacilitatorClient } from './execution/facilitator';
 ```
 
-**Key env vars:** `SIGNING_MODE` (`kms` | `agent-passkey`), `KMS_KEY_NAME`, `GCP_PROJECT_ID`
+**Key env vars:** `SIGNING_MODE` (`kms` | `agent-passkey`), `KMS_PROJECT_ID`, `KMS_LOCATION`, `KMS_KEYRING`, `KMS_KEY`
 
 See `protocol/000-docs/030-DR-ARCH-eip7702-delegation-architecture.md` for the migration ADR.
 
