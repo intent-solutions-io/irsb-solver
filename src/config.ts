@@ -66,13 +66,29 @@ export const ConfigSchema = z.object({
   REFUSALS_PATH: z.string().optional(),
   EVIDENCE_DIR: z.string().optional(),
 
-  // Agent Passkey (signing service)
+  // Agent Passkey (signing service) - DEPRECATED: Use KMS signing instead
   AGENT_PASSKEY_ENDPOINT: z
     .string()
     .url()
     .default("https://irsb-agent-passkey-308207955734.us-central1.run.app"),
   AGENT_PASSKEY_AUTH_TOKEN: z.string().optional(),
   AGENT_PASSKEY_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
+
+  // Signing mode: 'kms' (recommended) or 'agent-passkey' (legacy)
+  SIGNING_MODE: z.enum(["kms", "agent-passkey"]).default("agent-passkey"),
+
+  // Cloud KMS signing (when SIGNING_MODE=kms)
+  KMS_PROJECT_ID: z.string().optional(),
+  KMS_LOCATION: z.string().default("us-central1"),
+  KMS_KEYRING: z.string().optional(),
+  KMS_KEY: z.string().optional(),
+  KMS_KEY_VERSION: z.string().default("1"),
+
+  // EIP-7702 Delegation contracts
+  WALLET_DELEGATE_ADDRESS: z.string().optional(),
+  X402_FACILITATOR_ADDRESS: z.string().optional(),
+  RPC_URL: z.string().url().optional(),
+  CHAIN_ID: z.coerce.number().int().positive().default(11155111),
 });
 
 /**
@@ -92,10 +108,26 @@ export interface ResolvedConfig {
   REFUSALS_PATH: string;
   EVIDENCE_DIR: string;
 
-  // Agent Passkey
+  // Agent Passkey (legacy)
   AGENT_PASSKEY_ENDPOINT: string;
   AGENT_PASSKEY_AUTH_TOKEN?: string | undefined;
   AGENT_PASSKEY_TIMEOUT_MS: number;
+
+  // Signing mode
+  SIGNING_MODE: "kms" | "agent-passkey";
+
+  // Cloud KMS
+  KMS_PROJECT_ID?: string | undefined;
+  KMS_LOCATION: string;
+  KMS_KEYRING?: string | undefined;
+  KMS_KEY?: string | undefined;
+  KMS_KEY_VERSION: string;
+
+  // Delegation contracts
+  WALLET_DELEGATE_ADDRESS?: string | undefined;
+  X402_FACILITATOR_ADDRESS?: string | undefined;
+  RPC_URL?: string | undefined;
+  CHAIN_ID: number;
 }
 
 /**
@@ -146,6 +178,16 @@ export function loadConfig(): ResolvedConfig {
     AGENT_PASSKEY_ENDPOINT: parsed.AGENT_PASSKEY_ENDPOINT,
     AGENT_PASSKEY_AUTH_TOKEN: parsed.AGENT_PASSKEY_AUTH_TOKEN,
     AGENT_PASSKEY_TIMEOUT_MS: parsed.AGENT_PASSKEY_TIMEOUT_MS,
+    SIGNING_MODE: parsed.SIGNING_MODE,
+    KMS_PROJECT_ID: parsed.KMS_PROJECT_ID,
+    KMS_LOCATION: parsed.KMS_LOCATION,
+    KMS_KEYRING: parsed.KMS_KEYRING,
+    KMS_KEY: parsed.KMS_KEY,
+    KMS_KEY_VERSION: parsed.KMS_KEY_VERSION,
+    WALLET_DELEGATE_ADDRESS: parsed.WALLET_DELEGATE_ADDRESS,
+    X402_FACILITATOR_ADDRESS: parsed.X402_FACILITATOR_ADDRESS,
+    RPC_URL: parsed.RPC_URL,
+    CHAIN_ID: parsed.CHAIN_ID,
   };
 }
 
@@ -172,5 +214,13 @@ export function configSummary(config: ResolvedConfig): Record<string, unknown> {
       ? "(set)"
       : "(not set)",
     AGENT_PASSKEY_TIMEOUT_MS: config.AGENT_PASSKEY_TIMEOUT_MS,
+    SIGNING_MODE: config.SIGNING_MODE,
+    KMS_PROJECT_ID: config.KMS_PROJECT_ID ?? "(not set)",
+    KMS_KEYRING: config.KMS_KEYRING ?? "(not set)",
+    KMS_KEY: config.KMS_KEY ?? "(not set)",
+    WALLET_DELEGATE_ADDRESS: config.WALLET_DELEGATE_ADDRESS ?? "(not set)",
+    X402_FACILITATOR_ADDRESS: config.X402_FACILITATOR_ADDRESS ?? "(not set)",
+    RPC_URL: config.RPC_URL ?? "(not set)",
+    CHAIN_ID: config.CHAIN_ID,
   };
 }

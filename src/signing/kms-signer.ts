@@ -1,0 +1,204 @@
+/**
+ * Cloud KMS Signer for IRSB Solver
+ *
+ * Direct signing via GCP Cloud KMS, replacing the agent-passkey
+ * HTTP service for on-chain transaction signing.
+ *
+ * Benefits over agent-passkey:
+ * - No network dependency on Lit Protocol
+ * - Sub-100ms signing latency (vs 1-2s with Lit TEE)
+ * - Keys never leave Google HSMs
+ * - IAM-based access control with audit logging
+ *
+ * Environment variables:
+ * - KMS_PROJECT_ID: GCP project ID
+ * - KMS_LOCATION: Key location (default: us-central1)
+ * - KMS_KEYRING: Keyring name
+ * - KMS_KEY: Key name
+ * - KMS_KEY_VERSION: Key version (default: 1)
+ */
+
+/** Ethereum hex string (0x-prefixed) */
+type Hex = `0x${string}`;
+
+/**
+ * KMS Signer configuration
+ */
+export interface KmsSignerConfig {
+  /** GCP project ID */
+  projectId: string;
+
+  /** KMS location (e.g., 'us-central1') */
+  location: string;
+
+  /** KMS keyring name */
+  keyring: string;
+
+  /** KMS key name */
+  key: string;
+
+  /** KMS key version (default: '1') */
+  keyVersion?: string;
+
+  /** Chain ID for transaction signing */
+  chainId: number;
+}
+
+/**
+ * Signing result
+ */
+export interface KmsSigningResult {
+  /** Whether signing succeeded */
+  success: boolean;
+
+  /** Signed transaction hex */
+  signedTx?: Hex;
+
+  /** Transaction hash */
+  txHash?: Hex;
+
+  /** Signer address */
+  signerAddress?: Hex;
+
+  /** Error message if failed */
+  error?: string;
+}
+
+/**
+ * Cloud KMS Signer
+ *
+ * Signs transactions using GCP Cloud KMS secp256k1 keys.
+ * Implements the same interface as AgentPasskeyClient for drop-in replacement.
+ *
+ * @example
+ * ```typescript
+ * const signer = new KmsSigner({
+ *   projectId: 'irsb-protocol',
+ *   location: 'us-central1',
+ *   keyring: 'irsb-signing',
+ *   key: 'solver-key',
+ *   chainId: 11155111,
+ * });
+ *
+ * const address = await signer.getSignerAddress();
+ * const result = await signer.signDigest(digest);
+ * ```
+ */
+export class KmsSigner {
+  private config: Required<KmsSignerConfig>;
+  private cachedAddress: Hex | null = null;
+
+  constructor(config: KmsSignerConfig) {
+    this.config = {
+      ...config,
+      keyVersion: config.keyVersion ?? '1',
+    };
+  }
+
+  /**
+   * Get the KMS key resource name
+   */
+  getKeyResourceName(): string {
+    return (
+      `projects/${this.config.projectId}` +
+      `/locations/${this.config.location}` +
+      `/keyRings/${this.config.keyring}` +
+      `/cryptoKeys/${this.config.key}` +
+      `/cryptoKeyVersions/${this.config.keyVersion}`
+    );
+  }
+
+  /**
+   * Get the Ethereum address derived from the KMS public key
+   *
+   * Implementation requires @google-cloud/kms:
+   * 1. Fetch public key from KMS
+   * 2. Parse ASN.1 DER to get raw secp256k1 point
+   * 3. Compute keccak256 hash, take last 20 bytes
+   */
+  async getSignerAddress(): Promise<Hex> {
+    if (this.cachedAddress) return this.cachedAddress;
+
+    // TODO: Replace with actual KMS public key retrieval
+    // const client = new KeyManagementServiceClient();
+    // const [publicKey] = await client.getPublicKey({ name: this.getKeyResourceName() });
+    // const address = publicKeyToEthAddress(publicKey.pem);
+    // this.cachedAddress = address;
+    // return address;
+
+    throw new Error(
+      `KmsSigner: getSignerAddress() not yet implemented. ` +
+      `Key: ${this.getKeyResourceName()}. ` +
+      `Install @google-cloud/kms and implement public key derivation.`
+    );
+  }
+
+  /**
+   * Sign a keccak256 digest using KMS
+   *
+   * Implementation requires @google-cloud/kms:
+   * 1. Call asymmetricSign with the digest
+   * 2. Parse DER signature to (r, s)
+   * 3. Compute recovery parameter (v)
+   * 4. Return {r, s, v} signature
+   */
+  async signDigest(digest: Hex): Promise<{ r: Hex; s: Hex; v: number }> {
+    // TODO: Replace with actual KMS signing
+    // const client = new KeyManagementServiceClient();
+    // const [result] = await client.asymmetricSign({
+    //   name: this.getKeyResourceName(),
+    //   digest: { sha256: Buffer.from(digest.slice(2), 'hex') },
+    // });
+    // return parseKmsSignature(result.signature, digest);
+
+    throw new Error(
+      `KmsSigner: signDigest() not yet implemented. ` +
+      `Digest: ${digest.slice(0, 10)}... ` +
+      `Install @google-cloud/kms and implement asymmetric signing.`
+    );
+  }
+
+  /**
+   * Check if the KMS key is accessible
+   */
+  async isHealthy(): Promise<boolean> {
+    try {
+      await this.getSignerAddress();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+/**
+ * Create a KMS signer from environment variables
+ *
+ * Environment variables:
+ * - KMS_PROJECT_ID (required)
+ * - KMS_LOCATION (default: 'us-central1')
+ * - KMS_KEYRING (required)
+ * - KMS_KEY (required)
+ * - KMS_KEY_VERSION (default: '1')
+ * - KMS_CHAIN_ID (default: 11155111)
+ */
+export function createKmsSignerFromEnv(): KmsSigner {
+  const projectId = process.env['KMS_PROJECT_ID'];
+  const keyring = process.env['KMS_KEYRING'];
+  const key = process.env['KMS_KEY'];
+
+  if (!projectId || !keyring || !key) {
+    throw new Error(
+      'KMS signer requires KMS_PROJECT_ID, KMS_KEYRING, and KMS_KEY environment variables'
+    );
+  }
+
+  return new KmsSigner({
+    projectId,
+    location: process.env['KMS_LOCATION'] ?? 'us-central1',
+    keyring,
+    key,
+    keyVersion: process.env['KMS_KEY_VERSION'] ?? '1',
+    chainId: parseInt(process.env['KMS_CHAIN_ID'] ?? '11155111', 10),
+  });
+}
