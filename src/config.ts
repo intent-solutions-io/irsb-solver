@@ -66,16 +66,8 @@ export const ConfigSchema = z.object({
   REFUSALS_PATH: z.string().optional(),
   EVIDENCE_DIR: z.string().optional(),
 
-  // Agent Passkey (signing service) - DEPRECATED: Use KMS signing instead
-  AGENT_PASSKEY_ENDPOINT: z
-    .string()
-    .url()
-    .default("https://irsb-agent-passkey-308207955734.us-central1.run.app"),
-  AGENT_PASSKEY_AUTH_TOKEN: z.string().optional(),
-  AGENT_PASSKEY_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
-
-  // Signing mode: 'kms' (recommended) or 'agent-passkey' (legacy)
-  SIGNING_MODE: z.enum(["kms", "agent-passkey"]).default("agent-passkey"),
+  // Signing mode
+  SIGNING_MODE: z.literal("kms").default("kms"),
 
   // Cloud KMS signing (when SIGNING_MODE=kms)
   KMS_PROJECT_ID: z.string().optional(),
@@ -120,13 +112,8 @@ export interface ResolvedConfig {
   REFUSALS_PATH: string;
   EVIDENCE_DIR: string;
 
-  // Agent Passkey (legacy)
-  AGENT_PASSKEY_ENDPOINT: string;
-  AGENT_PASSKEY_AUTH_TOKEN?: string | undefined;
-  AGENT_PASSKEY_TIMEOUT_MS: number;
-
   // Signing mode
-  SIGNING_MODE: "kms" | "agent-passkey";
+  SIGNING_MODE: "kms";
 
   // Cloud KMS
   KMS_PROJECT_ID?: string | undefined;
@@ -187,9 +174,6 @@ export function loadConfig(): ResolvedConfig {
     RECEIPTS_PATH: parsed.RECEIPTS_PATH ?? resolve(dataDir, "receipts.jsonl"),
     REFUSALS_PATH: parsed.REFUSALS_PATH ?? resolve(dataDir, "refusals.jsonl"),
     EVIDENCE_DIR: parsed.EVIDENCE_DIR ?? resolve(dataDir, "evidence"),
-    AGENT_PASSKEY_ENDPOINT: parsed.AGENT_PASSKEY_ENDPOINT,
-    AGENT_PASSKEY_AUTH_TOKEN: parsed.AGENT_PASSKEY_AUTH_TOKEN,
-    AGENT_PASSKEY_TIMEOUT_MS: parsed.AGENT_PASSKEY_TIMEOUT_MS,
     SIGNING_MODE: parsed.SIGNING_MODE,
     KMS_PROJECT_ID: parsed.KMS_PROJECT_ID,
     KMS_LOCATION: parsed.KMS_LOCATION,
@@ -221,11 +205,6 @@ export function configSummary(config: ResolvedConfig): Record<string, unknown> {
     RECEIPTS_PATH: config.RECEIPTS_PATH,
     REFUSALS_PATH: config.REFUSALS_PATH,
     EVIDENCE_DIR: config.EVIDENCE_DIR,
-    AGENT_PASSKEY_ENDPOINT: config.AGENT_PASSKEY_ENDPOINT,
-    AGENT_PASSKEY_AUTH_TOKEN: config.AGENT_PASSKEY_AUTH_TOKEN
-      ? "(set)"
-      : "(not set)",
-    AGENT_PASSKEY_TIMEOUT_MS: config.AGENT_PASSKEY_TIMEOUT_MS,
     SIGNING_MODE: config.SIGNING_MODE,
     KMS_PROJECT_ID: config.KMS_PROJECT_ID ?? "(not set)",
     KMS_LOCATION: config.KMS_LOCATION,

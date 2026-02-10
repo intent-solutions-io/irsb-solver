@@ -1,14 +1,12 @@
 /**
  * Signing module for IRSB Solver
  *
- * Uses the centralized irsb-agent-passkey service for signing.
- * The solver submits SUBMIT_RECEIPT actions to the service.
+ * Uses Google Cloud KMS for on-chain transaction signing.
  */
 
 export {
-  AgentPasskeyClient,
-  createAgentPasskeyClientFromEnv,
-  type AgentPasskeyClientConfig,
-  type SigningResponse,
-  type SubmitReceiptParams,
-} from './client.js';
+  KmsSigner,
+  createKmsSigner,
+  type KmsSignerConfig,
+  type KmsSigningResult,
+} from './kms-signer.js';
