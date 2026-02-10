@@ -173,7 +173,7 @@ If you change stack:
 - `src/execution/` workflow runners + sandbox hooks
 - `src/evidence/` evidence manifest + hashing + stores
 - `src/receipts/` receipt builder + submitter
-- `src/signing/` signing client (Cloud KMS primary, agent-passkey legacy)
+- `src/signing/` Cloud KMS signing client
 - `src/execution/` workflow runners, x402 facilitator
 - `src/policy/` allowlists/budgets/risk gates
 - `src/cli.ts` small utilities
@@ -182,22 +182,11 @@ If you change stack:
 
 ### 4.3 Signing Architecture
 
-The solver supports two signing paths:
+**Cloud KMS** — Direct signing via Google Cloud KMS with on-chain policy enforcement through EIP-7702 caveat enforcers (spend limits, time windows, allowed targets). Sub-100ms latency per signature. Keys never leave Google HSMs.
 
-**Primary: Cloud KMS (recommended)**
-- Direct signing via Google Cloud KMS
-- On-chain policy enforcement through EIP-7702 caveat enforcers (spend limits, time windows, allowed targets)
-- <100ms latency per signature
-- Implementation: `src/signing/kms-signer.ts`
-
-**Legacy: Agent Passkey**
-- Threshold signatures via Lit Protocol PKP (2/3 TEE nodes)
-- Off-chain policy checks in agent-passkey service
-- 1-2s latency per signature
-- Still functional but deprecated — no new feature development
+Implementation: `src/signing/kms-signer.ts`
 
 ```typescript
-// Primary: Cloud KMS signer (src/signing/kms-signer.ts)
 import { createKmsSigner } from './signing/kms-signer';
 
 const signer = createKmsSigner({
@@ -208,15 +197,11 @@ const signer = createKmsSigner({
   KMS_KEY_VERSION: process.env.KMS_KEY_VERSION ?? '1',
   CHAIN_ID: Number(process.env.CHAIN_ID ?? '11155111'),
 });
-
-// Facilitator handles x402 payment settlement with delegation
-// src/execution/facilitator.ts
-import { createFacilitatorClient } from './execution/facilitator';
 ```
 
-**Key env vars:** `SIGNING_MODE` (`kms` | `agent-passkey`), `KMS_PROJECT_ID`, `KMS_LOCATION`, `KMS_KEYRING`, `KMS_KEY`
+**Key env vars:** `KMS_PROJECT_ID`, `KMS_LOCATION`, `KMS_KEYRING`, `KMS_KEY`, `KMS_KEY_VERSION`
 
-See `protocol/000-docs/030-DR-ARCH-eip7702-delegation-architecture.md` for the migration ADR.
+See `protocol/000-docs/030-DR-ARCH-eip7702-delegation-architecture.md` for the delegation ADR.
 
 Keep modules small and testable.
 
