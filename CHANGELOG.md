@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-02-11
+
+Cloud KMS signing migration and deprecated code cleanup.
+
+### Added
+- Cloud KMS signer implementation with Google Cloud KMS integration (#13, #14)
+- X402Facilitator client for EIP-7702 delegated payment settlement
+- Chain wiring for direct on-chain interaction
+
+### Removed
+- Agent-passkey client removed (deprecated in favor of Cloud KMS + on-chain policy enforcement)
+- `SIGNING_MODE` simplified to `"kms"` only
+
+### Changed
+- Signing architecture now uses Cloud KMS directly instead of agent-passkey service
+- On-chain policy enforcement via EIP-7702 WalletDelegate with caveat enforcers
+
+---
+
 ## [0.2.0] - 2026-02-08
 
 ### Added
