@@ -8,7 +8,7 @@ This file defines how Claude Code must operate in this repo. Treat it as binding
 
 ## 0) Project Summary
 
-**Repo:** `irsb-solver`
+**Repo:** `irsb-solver` | **Version:** v0.3.0
 **Purpose:** Reference **solver/executor service** for the IRSB protocol. It consumes intents, runs allowed workflows off-chain, produces evidence, and submits receipts.
 **Related repos:**
 - `irsb-protocol` — on-chain contracts + schemas + settlement primitives
